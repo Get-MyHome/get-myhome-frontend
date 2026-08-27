@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import ArrowIcon from "@/assets/icons/arrow.svg";
 import heroIllustration from "@/assets/images/eligibilityHero.png";
@@ -25,9 +26,8 @@ export function EligibilityCtaCard() {
           단계별로 확인해 드려요.
         </h2>
 
-        {/* TODO: 판정 플로우 라우트가 생기면 Link 로 바꾼다 */}
-        <button
-          type="button"
+        <Link
+          href="/eligibility"
           className="flex w-full items-center justify-center gap-[6px] rounded-[6px] bg-primary p-[10px]"
         >
           <span className="text-subtitle-4 font-bold text-primary-foreground">
@@ -35,7 +35,7 @@ export function EligibilityCtaCard() {
           </span>
           {/* 에셋은 위를 향하는 화살표다. 디자인대로 90도 돌려 오른쪽을 향하게 한다 */}
           <ArrowIcon className="size-6 rotate-90" />
-        </button>
+        </Link>
       </div>
     </section>
   );

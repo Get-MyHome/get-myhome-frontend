@@ -57,6 +57,12 @@
   /* Chip — 디자인 파일의 chip-2. 청약 "민영" 배지에 쓴다.
      "국민" 배지는 green-1 을 그대로 재사용한다. */
   --color-chip-2: #7b61ff;
+
+  /* 상단 앱바 — 디자인의 "상단상태" 컴포넌트가 본문과 다른 색 세트를 쓴다.
+     nav-text(#2b2b2b) 는 neutral-600(#111125) 과 사실상 같은 검정이고
+     nav-border(#dedede) 는 neutral-200 보다 진한 회색이다. 디자이너 확인 필요 */
+  --color-nav-text: #2b2b2b;
+  --color-nav-border: #dedede;
 }
 
 /* 2. Typography — Mobile 스펙. weight 는 font-* 유틸리티로 따로 붙인다 */
