@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import ArrowIcon from "@/assets/icons/arrow.svg";
+import { SERVICE_TAGLINE_MULTILINE } from "@/constants/service";
 import heroIllustration from "@/assets/images/eligibilityHero.png";
 
 /** 소득·자산 입력으로 청약 감당 가능성을 판정하는 플로우의 진입 카드. */
@@ -18,12 +19,8 @@ export function EligibilityCtaCard() {
       />
 
       <div className="flex flex-col gap-[12px]">
-        <h2 className="text-subtitle-2 font-bold text-primary">
-          소득·자산만 입력하면 계약금부터 잔금까지,
-          <br />
-          해당 청약을 감당할 수 있는지
-          <br />
-          단계별로 확인해 드려요.
+        <h2 className="text-subtitle-2 font-bold whitespace-pre-line text-primary">
+          {SERVICE_TAGLINE_MULTILINE}
         </h2>
 
         <Link

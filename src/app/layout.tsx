@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
-import "./globals.css";
+import "@/styles/globals.css";
 
 import { Splash } from "@/components/layout/splash";
+import { SERVICE_TAGLINE } from "@/constants/service";
 
 import { Providers } from "./providers";
 
@@ -13,8 +14,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // 배포 도메인. og:image 는 절대 URL 이어야 해서 여기서 기준을 잡는다.
+  // 배포 시 NEXT_PUBLIC_SITE_URL 을 반드시 설정할 것 — 없으면 localhost 가 박힌다
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "Get-MyHome",
-  description: "청년의 주택 구매 자금 가능성을 판정해드려요.",
+  description: SERVICE_TAGLINE,
+  // 파일 규약(app/icon.png · app/opengraph-image.png) 대신 public/ 을 직접 가리킨다.
+  // 규약을 쓰지 않으므로 크기·트위터 태그를 여기서 손으로 채워야 한다.
+  icons: { icon: "/icon.png" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "Get-MyHome",
+    title: "Get-MyHome",
+    description: SERVICE_TAGLINE,
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Get-MyHome",
+    description: SERVICE_TAGLINE,
+    images: ["/opengraph-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
