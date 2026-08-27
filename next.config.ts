@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
                 "#000000": "currentColor",
                 "#1D2433": "currentColor",
                 "#111125": "currentColor",
+                // 하단 네비의 비활성 아이콘이 neutral-300 으로 고정 export 된다.
+                // 활성/비활성 색을 코드에서 바꾸려면 currentColor 여야 한다.
+                "#828294": "currentColor",
               },
             },
           },
