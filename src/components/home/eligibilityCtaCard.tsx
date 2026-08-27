@@ -1,7 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 
-import ArrowIcon from "@/assets/icons/arrow.svg";
+import { StartAssessmentLink } from "@/components/eligibility/startAssessmentLink";
 import { SERVICE_TAGLINE_MULTILINE } from "@/constants/service";
 import heroIllustration from "@/assets/images/eligibilityHero.png";
 
@@ -23,16 +22,7 @@ export function EligibilityCtaCard() {
           {SERVICE_TAGLINE_MULTILINE}
         </h2>
 
-        <Link
-          href="/eligibility"
-          className="flex w-full items-center justify-center gap-[6px] rounded-[6px] bg-primary p-[10px]"
-        >
-          <span className="text-subtitle-4 font-bold text-primary-foreground">
-            가능성 판정하기
-          </span>
-          {/* 에셋은 위를 향하는 화살표다. 디자인대로 90도 돌려 오른쪽을 향하게 한다 */}
-          <ArrowIcon className="size-6 rotate-90" />
-        </Link>
+        <StartAssessmentLink />
       </div>
     </section>
   );

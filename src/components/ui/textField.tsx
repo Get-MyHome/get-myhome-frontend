@@ -60,7 +60,10 @@ export function TextField({
           maxLength={maxLength}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className="min-w-0 flex-1 text-body-2 font-medium text-foreground outline-none placeholder:text-neutral-300"
+          // iOS Safari 는 16px 미만 입력에 포커스하면 화면을 확대한다.
+          // maximum-scale 로 막으면 핀치 줌까지 죽으므로 글자 크기로 해결한다.
+          // line-height 는 20 을 유지해 입력 박스 높이는 그대로다 (10+20+10+2=42)
+          className="min-w-0 flex-1 text-[16px] leading-[20px] font-medium text-foreground outline-none placeholder:text-neutral-300"
         />
         {suffix && (
           <span className="shrink-0 text-body-2 font-medium text-neutral-300">

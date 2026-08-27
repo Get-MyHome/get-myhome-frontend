@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import ChevronIcon from "@/assets/icons/chevronRight.svg";
 import {
@@ -10,15 +10,40 @@ import {
   type EligibilityConditions,
 } from "@/types/eligibility";
 import { cn } from "@/utils/cn";
+import { CONDITIONS_STORAGE_KEY } from "@/constants/storage";
+import { readSessionState, writeSessionState } from "@/utils/sessionState";
 
 import { OptionalConditionFields } from "./optionalConditionFields";
 import { RequiredConditionFields } from "./requiredConditionFields";
 
+/**
+ * 첫 렌더에서 한 번만 읽는다. 2단계에 값이 남아 있었다면 접힌 채로 감추지 않는다.
+ * 서버에서는 sessionStorage 접근이 실패해 항상 빈 값이 되고,
+ * 클라이언트 첫 렌더에서 저장값으로 채워진다.
+ */
+function restoreConditions() {
+  const saved = readSessionState<EligibilityConditions>(CONDITIONS_STORAGE_KEY);
+
+  return {
+    conditions: saved ?? EMPTY_CONDITIONS,
+    optionalOpen: Boolean(
+      saved && (saved.monthlySaving || saved.householdRole || saved.netWorth)
+    ),
+  };
+}
+
 export function ConditionForm() {
   const router = useRouter();
-  const [conditions, setConditions] =
-    useState<EligibilityConditions>(EMPTY_CONDITIONS);
-  const [optionalOpen, setOptionalOpen] = useState(false);
+  const [restored] = useState(restoreConditions);
+  const [conditions, setConditions] = useState<EligibilityConditions>(
+    restored.conditions
+  );
+  const [optionalOpen, setOptionalOpen] = useState(restored.optionalOpen);
+
+  useEffect(() => {
+    if (conditions === EMPTY_CONDITIONS) return;
+    writeSessionState(CONDITIONS_STORAGE_KEY, conditions);
+  }, [conditions]);
 
   const updateField = useCallback(
     <Key extends keyof EligibilityConditions>(
