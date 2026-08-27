@@ -11,19 +11,22 @@
 | 아이콘 | SVG → SVGR 로 React 컴포넌트 변환 |
 | 서버 상태 | TanStack Query |
 | 클라이언트 상태 | Zustand |
+| 패키지 매니저 | pnpm (Corepack 으로 버전 고정) |
 
 컴포넌트 라이브러리는 쓰지 않는다. 디자이너가 정의한 시스템을 그대로 구현한다.
 
 ## 실행
 
 ```bash
-npm install
-npm run dev
-npm run build
-npm run lint
+pnpm install
+pnpm dev
+pnpm build
+pnpm lint
 ```
 
-`/design-system` 에서 토큰이 디자인 파일과 맞는지 눈으로 확인할 수 있다.
+패키지 매니저는 pnpm 으로 고정돼 있다(`package.json` 의 `packageManager`).
+Corepack 이 해당 버전을 자동으로 맞추므로 pnpm 을 따로 설치하지 않아도 된다.
+npm 이나 yarn 으로 설치하면 락파일이 갈라지므로 쓰지 않는다.
 
 ## 구조
 
@@ -32,8 +35,7 @@ src/
 ├─ app/
 │  ├─ globals.css       디자인 토큰 전체 (팔레트 · 타이포 · 시맨틱)
 │  ├─ layout.tsx        폰트 로드 + Providers
-│  ├─ providers.tsx     QueryClientProvider
-│  └─ design-system/    토큰 확인용 레퍼런스 페이지
+│  └─ providers.tsx     QueryClientProvider
 ├─ assets/icons/        디자이너가 내보낸 SVG
 ├─ lib/
 │  ├─ query-client.ts   QueryClient 팩토리

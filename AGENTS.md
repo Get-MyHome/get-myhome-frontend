@@ -85,7 +85,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 서버 컴포넌트가 기본이다. `"use client"` 는 훅, 이벤트 핸들러, 브라우저 API 가
   필요할 때만 붙이고 가능한 한 트리 아래쪽에 둔다.
 
+## 패키지 매니저
+
+pnpm 만 쓴다. `package.json` 의 `packageManager` 필드로 버전이 고정돼 있고
+Corepack 이 이를 강제한다. `npm install` 이나 `yarn` 을 실행하지 않는다.
+락파일이 갈라지면 사람마다 다른 의존성 버전을 쓰게 된다.
+
 ## 작업 후 확인
 
-- 코드를 고쳤으면 `npm run build` 와 `npm run lint` 를 돌린다.
-- 토큰을 고쳤으면 `/design-system` 에서 눈으로 확인한다.
+- 코드를 고쳤으면 `pnpm build` 와 `pnpm lint` 를 돌린다.
