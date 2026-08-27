@@ -14,17 +14,18 @@ import { OptionalConditionFields } from "./optionalConditionFields";
 import { RequiredConditionFields } from "./requiredConditionFields";
 
 export function ConditionForm() {
-  const [conditions, setConditions] = useState<EligibilityConditions>(EMPTY_CONDITIONS);
+  const [conditions, setConditions] =
+    useState<EligibilityConditions>(EMPTY_CONDITIONS);
   const [optionalOpen, setOptionalOpen] = useState(false);
 
   const updateField = useCallback(
     <Key extends keyof EligibilityConditions>(
       key: Key,
-      value: EligibilityConditions[Key],
+      value: EligibilityConditions[Key]
     ) => {
       setConditions((previous) => ({ ...previous, [key]: value }));
     },
-    [],
+    []
   );
 
   const submittable = isRequiredComplete(conditions);
@@ -39,7 +40,10 @@ export function ConditionForm() {
 
       {optionalOpen && (
         <div className="mt-5">
-          <OptionalConditionFields conditions={conditions} onChange={updateField} />
+          <OptionalConditionFields
+            conditions={conditions}
+            onChange={updateField}
+          />
         </div>
       )}
 
@@ -53,7 +57,10 @@ export function ConditionForm() {
           더 정확하게 2단계 선택 입력하기
           <ChevronIcon
             aria-hidden="true"
-            className={cn("size-6 shrink-0", optionalOpen ? "-rotate-90" : "rotate-90")}
+            className={cn(
+              "size-6 shrink-0",
+              optionalOpen ? "-rotate-90" : "rotate-90"
+            )}
           />
         </button>
 
@@ -64,10 +71,10 @@ export function ConditionForm() {
           className={cn(
             "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",
-            submittable ? "bg-primary" : "bg-primary-300",
+            submittable ? "bg-primary" : "bg-primary-300"
           )}
         >
-          바로보기
+          다음
         </button>
       </div>
     </form>
