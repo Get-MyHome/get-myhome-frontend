@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import ChevronIcon from "@/assets/icons/chevronRight.svg";
@@ -14,6 +15,7 @@ import { OptionalConditionFields } from "./optionalConditionFields";
 import { RequiredConditionFields } from "./requiredConditionFields";
 
 export function ConditionForm() {
+  const router = useRouter();
   const [conditions, setConditions] =
     useState<EligibilityConditions>(EMPTY_CONDITIONS);
   const [optionalOpen, setOptionalOpen] = useState(false);
@@ -34,7 +36,10 @@ export function ConditionForm() {
     // 짧은 상태에서는 CTA 가 화면 아래에 붙고, 2단계를 펼치면 본문을 따라 내려간다
     <form
       className="flex flex-1 flex-col px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+12px)]"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={(event) => {
+        event.preventDefault();
+        router.push("/eligibility/notices");
+      }}
     >
       <RequiredConditionFields conditions={conditions} onChange={updateField} />
 
@@ -64,7 +69,6 @@ export function ConditionForm() {
           />
         </button>
 
-        {/* TODO: 결과 화면(/eligibility/result)이 생기면 라우팅을 붙인다 */}
         <button
           type="submit"
           disabled={!submittable}

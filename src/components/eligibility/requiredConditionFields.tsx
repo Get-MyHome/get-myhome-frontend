@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChoiceGroup } from "@/components/ui/choiceGroup";
 import { SelectField } from "@/components/ui/selectField";
@@ -21,6 +23,8 @@ function digitsOnly(value: string): string {
   return value.replace(/[^0-9]/g, "");
 }
 
+const BIRTH_DATE_LENGTH = 6;
+
 export function RequiredConditionFields({
   conditions,
   onChange,
@@ -31,6 +35,12 @@ export function RequiredConditionFields({
     value: EligibilityConditions[Key],
   ) => void;
 }) {
+  // 입력 도중에 에러를 띄우지 않도록, 한 번 벗어난 뒤부터 검사한다
+  const [birthDateTouched, setBirthDateTouched] = useState(false);
+  const birthDateIncomplete =
+    conditions.birthDate.length > 0 &&
+    conditions.birthDate.length < BIRTH_DATE_LENGTH;
+
   return (
     <div className="flex flex-col gap-[12px]">
       <div className="flex flex-col gap-5">
@@ -61,9 +71,15 @@ export function RequiredConditionFields({
           required
           value={conditions.birthDate}
           onChange={(value) => onChange("birthDate", digitsOnly(value))}
+          onBlur={() => setBirthDateTouched(true)}
           placeholder="생년월일 6자리를 입력해주세요."
           inputMode="numeric"
-          maxLength={6}
+          maxLength={BIRTH_DATE_LENGTH}
+          error={
+            birthDateTouched && birthDateIncomplete
+              ? "생년월일 6자리를 모두 입력해주세요."
+              : undefined
+          }
         />
 
         <SelectField

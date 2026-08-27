@@ -13,3 +13,9 @@ export function formatDotDate(isoDate: string): string {
 export function formatEok(won: number): string {
   return `${Number((won / EOK).toFixed(1))}억`;
 }
+
+/** ISO 연월(YYYY-MM)을 "2029.06" 형태로 바꾼다 */
+export function formatYearMonth(isoMonth: string): string {
+  const [year, month] = isoMonth.split("-");
+  return `${year}.${month}`;
+}
