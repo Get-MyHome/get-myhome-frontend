@@ -1,18 +1,24 @@
+import Link from "next/link";
+
 import ChevronRightIcon from "@/assets/icons/chevronRight.svg";
+import type { HousingSubscription } from "@/types/subscription";
 import { formatDotDate, formatEok } from "@/utils/format";
 
-import type { HousingSubscription } from "@/types/subscription";
 import { SupplyTypeBadge } from "./supplyTypeBadge";
 
+/** 청약 공고 카드. 누르면 평형 선택 화면으로 넘어간다 */
 export function SubscriptionCard({
   subscription,
 }: {
   subscription: HousingSubscription;
 }) {
-  const { supplyType, deadline, name, address, price } = subscription;
+  const { id, supplyType, deadline, name, address, price } = subscription;
 
   return (
-    <article className="flex items-center justify-between gap-[12px] rounded-[6px] bg-muted p-[12px]">
+    <Link
+      href={`/eligibility/notices/${id}`}
+      className="flex items-center justify-between gap-[12px] rounded-[6px] bg-muted p-[12px]"
+    >
       <div className="flex min-w-0 flex-col gap-[2px]">
         <div className="flex items-end gap-[6px]">
           <SupplyTypeBadge supplyType={supplyType} />
@@ -28,7 +34,10 @@ export function SubscriptionCard({
         </p>
       </div>
 
-      <ChevronRightIcon className="size-6 shrink-0 text-foreground" />
-    </article>
+      <ChevronRightIcon
+        aria-hidden="true"
+        className="size-6 shrink-0 text-foreground"
+      />
+    </Link>
   );
 }
