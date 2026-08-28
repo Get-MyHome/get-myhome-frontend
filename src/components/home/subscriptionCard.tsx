@@ -17,9 +17,9 @@ export function SubscriptionCard({
   return (
     <Link
       href={`/eligibility/notices/${id}`}
-      className="flex items-center justify-between gap-[12px] rounded-[6px] bg-muted p-[12px]"
+      className="flex items-center justify-between rounded-[6px] bg-muted p-[12px]"
     >
-      <div className="flex min-w-0 flex-col gap-[2px]">
+      <div className="flex min-w-0 flex-col gap-[6px]">
         <div className="flex items-end gap-[6px]">
           <SupplyTypeBadge supplyType={supplyType} />
           <span className="text-body-3 font-medium text-muted-foreground">
@@ -27,11 +27,13 @@ export function SubscriptionCard({
           </span>
         </div>
 
-        <h3 className="text-subtitle-4 font-bold text-foreground">{name}</h3>
-        <p className="text-body-3 font-medium text-foreground">{address}</p>
-        <p className="text-body-3 font-medium text-info">
-          분양가 {formatEok(price)}
-        </p>
+        <div className="flex flex-col gap-[2px]">
+          <h3 className="text-subtitle-4 font-bold text-foreground">{name}</h3>
+          <p className="text-body-3 font-medium text-foreground">{address}</p>
+          <p className="text-body-3 font-medium text-info">
+            분양가 {formatEok(price)}
+          </p>
+        </div>
       </div>
 
       <ChevronRightIcon

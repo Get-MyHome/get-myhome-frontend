@@ -8,7 +8,7 @@ import { FieldLabel } from "./fieldLabel";
 
 /**
  * 라벨 + 단일 행 입력. 오른쪽 suffix 는 단위("만원")나 입력값 읽기("팔천만원")를 보여준다.
- * 테두리는 에러면 danger, 값이 있으면 primary-600, 비어 있으면 primary-400 이다.
+ * 테두리는 에러면 danger, 값이 있는 채로 포커스되면 primary-600, 그 외에는 primary-400 이다.
  */
 export function TextField({
   label,
@@ -47,7 +47,11 @@ export function TextField({
       <div
         className={cn(
           "flex items-center gap-[10px] rounded-[6px] border p-[10px]",
-          error ? "border-danger" : filled ? "border-primary" : "border-primary-400"
+          error
+            ? "border-danger"
+            : filled
+              ? "border-primary-400 focus-within:border-primary"
+              : "border-primary-400"
         )}
       >
         <input

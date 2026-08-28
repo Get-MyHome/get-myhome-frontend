@@ -9,6 +9,7 @@ import { FieldLabel } from "./fieldLabel";
 
 /**
  * 라벨 + 드롭다운. 목록은 버튼 아래에 겹쳐 뜬다 (디자인상 버튼과 9px 간격).
+ * 테두리는 값이 선택된 채로 열려 있거나 포커스될 때만 primary-600 이다.
  * 셰브론 에셋은 오른쪽을 향하므로 닫힘=아래, 열림=위로 회전시킨다.
  */
 export function SelectField<Option extends string>({
@@ -41,7 +42,11 @@ export function SelectField<Option extends string>({
           aria-controls={listId}
           className={cn(
             "flex w-full items-center justify-between gap-[11px] rounded-[6px] border bg-surface px-[10px] py-[8px]",
-            value || open ? "border-primary" : "border-primary-400",
+            !value
+              ? "border-primary-400"
+              : open
+                ? "border-primary"
+                : "border-primary-400 focus-visible:border-primary",
           )}
         >
           <span
