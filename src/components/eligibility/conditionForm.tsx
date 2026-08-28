@@ -100,7 +100,7 @@ export function ConditionForm() {
           className={cn(
             "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",
-            submittable ? "bg-primary" : "bg-primary-300"
+            submittable ? "bg-primary" : "bg-primary-400"
           )}
         >
           다음
