@@ -1,12 +1,13 @@
-import { NoticeSelectList } from "@/components/notices/noticeSelectList";
 import { AppBar } from "@/components/layout/appBar";
-import { MOCK_SUBSCRIPTIONS } from "@/mocks/subscriptions";
+import { SubscriptionSection } from "@/components/notices/subscriptionSection";
 
 export default function NoticeSelectPage() {
   return (
     <>
       <AppBar title="청약 공고 선택" />
-      <NoticeSelectList subscriptions={MOCK_SUBSCRIPTIONS} />
+      <div className="flex flex-1 flex-col px-gutter pt-[13px]">
+        <SubscriptionSection headerOffset="top-[calc(env(safe-area-inset-top)+56px)]" />
+      </div>
     </>
   );
 }

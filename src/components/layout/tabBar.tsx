@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import type { FC, SVGProps } from "react";
 
 import TabHomeIcon from "@/assets/icons/tabHome.svg";
-import TabMyIcon from "@/assets/icons/tabMy.svg";
 import TabNoticeIcon from "@/assets/icons/tabNotice.svg";
 import { cn } from "@/utils/cn";
 
@@ -18,7 +17,6 @@ interface TabItem {
 const TAB_ITEMS: TabItem[] = [
   { href: "/", label: "홈", Icon: TabHomeIcon },
   { href: "/notices", label: "공고", Icon: TabNoticeIcon },
-  { href: "/my", label: "마이페이지", Icon: TabMyIcon },
 ];
 
 /**
