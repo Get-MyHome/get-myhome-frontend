@@ -2,8 +2,14 @@ import type { NextConfig } from "next";
 
 // 백엔드가 평문 HTTP 라 HTTPS 배포에서 브라우저가 직접 호출을 막는다(Mixed Content).
 // /api/proxy/* 를 서버에서 백엔드로 넘겨 우회한다. 백엔드에 HTTPS 가 붙으면 제거 가능.
-const BACKEND_ORIGIN =
-  process.env.BACKEND_API_ORIGIN ?? "http://13.209.148.94:8080";
+// 값은 .env.local(로컬) / 배포 환경변수 에서만 온다. 누락 시 빌드를 멈춘다.
+const BACKEND_ORIGIN = process.env.BACKEND_API_ORIGIN;
+if (!BACKEND_ORIGIN) {
+  throw new Error(
+    "환경변수 BACKEND_API_ORIGIN 이 필요합니다 (예: http://13.209.148.94:8080). " +
+      ".env.local 또는 배포 환경변수에 설정하세요."
+  );
+}
 
 const nextConfig: NextConfig = {
   async rewrites() {
