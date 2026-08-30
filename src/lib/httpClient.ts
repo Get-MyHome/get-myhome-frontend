@@ -2,10 +2,11 @@ import axios from "axios";
 
 import type { ApiErrorBody } from "@/types/apiResponse";
 
-// 기본값은 next.config 의 rewrite 프록시(/api/proxy/*). 브라우저가 같은 오리진으로
-// 호출하고 Next 서버가 백엔드(HTTP)로 넘긴다 — HTTPS 배포의 Mixed Content 우회.
+// 항상 same-origin 프록시로 호출한다. Next 서버가 백엔드(HTTP)로 넘긴다
+// (next.config 의 rewrite) — HTTPS 배포의 Mixed Content 우회.
+// 백엔드 주소는 서버 환경변수 BACKEND_API_ORIGIN 로만 바꾼다.
 export const httpClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api/proxy",
+  baseURL: "/api/proxy",
   headers: {
     "Content-Type": "application/json",
   },
