@@ -8,3 +8,10 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+/** 에러 응답 봉투. 성공 응답(ApiResponse)과 키 구성이 다르다 */
+export interface ApiErrorBody {
+  error_code: string;
+  message: string;
+  retryable: boolean;
+}
