@@ -6,7 +6,7 @@ import type { NextConfig } from "next";
 const BACKEND_ORIGIN = process.env.BACKEND_API_ORIGIN;
 if (!BACKEND_ORIGIN) {
   throw new Error(
-    "환경변수 BACKEND_API_ORIGIN 이 필요합니다 (예: http://13.209.148.94:8080). " +
+    "환경변수 BACKEND_API_ORIGIN 이 필요합니다 " +
       ".env.local 또는 배포 환경변수에 설정하세요."
   );
 }
