@@ -1,6 +1,19 @@
 import type { NextConfig } from "next";
 
+// 백엔드가 평문 HTTP 라 HTTPS 배포에서 브라우저가 직접 호출을 막는다(Mixed Content).
+// /api/proxy/* 를 서버에서 백엔드로 넘겨 우회한다. 백엔드에 HTTPS 가 붙으면 제거 가능.
+const BACKEND_ORIGIN =
+  process.env.BACKEND_API_ORIGIN ?? "http://13.209.148.94:8080";
+
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: `${BACKEND_ORIGIN}/api/v1/:path*`,
+      },
+    ];
+  },
   turbopack: {
     rules: {
       // .svg 를 import 하면 React 컴포넌트로 변환된다.
