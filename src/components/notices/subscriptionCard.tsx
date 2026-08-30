@@ -12,7 +12,8 @@ export function SubscriptionCard({
 }: {
   subscription: HousingSubscription;
 }) {
-  const { id, supplyType, deadline, name, address, price } = subscription;
+  const { id, supplyType, supplyTypeLabel, deadline, name, address, price } =
+    subscription;
 
   return (
     <Link
@@ -21,7 +22,7 @@ export function SubscriptionCard({
     >
       <div className="flex min-w-0 flex-col gap-[6px]">
         <div className="flex items-end gap-[6px]">
-          <SupplyTypeBadge supplyType={supplyType} />
+          <SupplyTypeBadge supplyType={supplyType} label={supplyTypeLabel} />
           <span className="text-body-3 font-medium text-muted-foreground">
             {formatDotDate(deadline)} 까지
           </span>
@@ -31,7 +32,7 @@ export function SubscriptionCard({
           <h3 className="text-subtitle-4 font-bold text-foreground">{name}</h3>
           <p className="text-body-3 font-medium text-foreground">{address}</p>
           <p className="text-body-3 font-medium text-info">
-            분양가 {formatEok(price)}
+            분양가 {price === null ? "미정" : formatEok(price)}
           </p>
         </div>
       </div>

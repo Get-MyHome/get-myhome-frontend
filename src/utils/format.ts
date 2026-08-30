@@ -14,8 +14,7 @@ export function formatEok(won: number): string {
   return `${Number((won / EOK).toFixed(1))}억`;
 }
 
-/** ISO 연월(YYYY-MM)을 "2029.06" 형태로 바꾼다 */
-export function formatYearMonth(isoMonth: string): string {
-  const [year, month] = isoMonth.split("-");
-  return `${year}.${month}`;
+/** 만원 단위 금액을 "9.1억" 형태로 바꾼다 (API 금액은 만원 단위) */
+export function formatManwonToEok(manwon: number): string {
+  return formatEok(manwon * 10_000);
 }

@@ -3,10 +3,19 @@
 import { useState } from "react";
 
 import ExternalLinkIcon from "@/assets/icons/externalLink.svg";
+import RulerIcon from "@/assets/icons/ruler.svg";
 import { SelectableRow } from "@/components/ui/selectableRow";
-import type { UnitType } from "@/types/subscription";
+import type { ComplexUnitType } from "@/types/complex";
 import { cn } from "@/utils/cn";
-import { formatEok } from "@/utils/format";
+import { formatManwonToEok } from "@/utils/format";
+
+/** "059.9442A" → { area: 60, variant: "A" } */
+function parseUnitType(type: string): { area: number; variant: string } {
+  return {
+    area: Math.round(parseFloat(type)),
+    variant: type.replace(/[\d.\s]/g, ""),
+  };
+}
 
 /**
  * 주택형(평형)을 고르고 판정으로 넘어가는 영역.
@@ -14,37 +23,54 @@ import { formatEok } from "@/utils/format";
  */
 export function UnitTypeSelector({
   unitTypes,
-  noticeUrl,
+  sourceUrl,
 }: {
-  unitTypes: UnitType[];
-  noticeUrl: string;
+  unitTypes: ComplexUnitType[];
+  sourceUrl: string;
 }) {
-  const [selectedArea, setSelectedArea] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-1 flex-col gap-5">
-      <ul className="flex flex-col gap-4">
-        {unitTypes.map((unitType) => (
-          <li key={unitType.area}>
-            <SelectableRow
-              label={`${unitType.area}㎡`}
-              value={`${formatEok(unitType.price)} 원`}
-              selected={unitType.area === selectedArea}
-              onClick={() => setSelectedArea(unitType.area)}
-            />
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-1 flex-col gap-[10px]">
+      {unitTypes.length > 0 && (
+        <>
+          <p className="flex items-center gap-[6px] text-body-2 font-medium text-foreground">
+            <RulerIcon aria-hidden="true" className="size-5 shrink-0" />
+            평형을 선택해주세요.
+          </p>
 
-      <div className="mt-auto flex flex-col items-center gap-3">
+          <ul className="flex flex-col gap-[14px]">
+            {unitTypes.map((unitType) => {
+              const { area, variant } = parseUnitType(unitType.type);
+
+              return (
+                <li key={unitType.unit_type_id}>
+                  <SelectableRow
+                    label={`${area}㎡${variant ? ` ${variant}` : ""}`}
+                    value={
+                      unitType.sale_price === null
+                        ? "미정"
+                        : `${formatManwonToEok(unitType.sale_price)} 원`
+                    }
+                    selected={unitType.unit_type_id === selectedId}
+                    onClick={() => setSelectedId(unitType.unit_type_id)}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+
+      <div className="mt-auto flex flex-col items-center gap-[10px] pt-[20px]">
         {/* TODO: 판정 결과 화면(/eligibility/result)이 생기면 라우팅을 붙인다 */}
         <button
           type="button"
-          disabled={selectedArea === null}
+          disabled={selectedId === null}
           className={cn(
             "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",
-            selectedArea === null ? "bg-primary-300" : "bg-primary"
+            selectedId === null ? "bg-primary-400" : "bg-primary"
           )}
         >
           가능성 판정하기
@@ -52,7 +78,7 @@ export function UnitTypeSelector({
 
         {/* 원문 PDF 는 자체 재배포하지 않고 링크로만 연결한다 */}
         <a
-          href={noticeUrl}
+          href={sourceUrl}
           target="_blank"
           rel="noreferrer"
           className="flex items-center gap-[4px] text-body-3 font-medium text-foreground"
