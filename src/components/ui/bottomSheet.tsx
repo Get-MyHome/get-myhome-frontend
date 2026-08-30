@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 /**
@@ -19,6 +19,16 @@ export function BottomSheet({
   title: string;
   children: ReactNode;
 }) {
+  // 시트가 떠 있는 동안 뒤 배경 스크롤을 막는다
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   // 스티키 헤더(z-10) 밖으로 빼내야 하단 탭바(z-40) 위에 올라온다
