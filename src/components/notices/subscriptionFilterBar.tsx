@@ -12,6 +12,9 @@ import {
 } from "@/types/complex";
 import { cn } from "@/utils/cn";
 
+/** 필터 미선택 = 전체. 값은 undefined 로 다룬다 */
+const ALL_LABEL = "전체";
+
 const HOUSE_CATEGORY_LABEL: Record<HouseCategory, string> = {
   PRIVATE: "민간",
   PUBLIC: "공공",
@@ -20,8 +23,7 @@ const HOUSE_CATEGORY_LABEL: Record<HouseCategory, string> = {
 type OpenSheet = "region" | "category" | null;
 
 /**
- * 지역 / 주택 구분 필터. 칩을 누르면 바텀시트에서 값을 고른다.
- * 정식 디자인 나오면 시트 내용·스타일을 교체한다.
+ * 지역 / 주택 구분 필터. 칩을 누르면 바텀시트에서 값을 고르고 하단 버튼으로 확정한다.
  */
 export function SubscriptionFilterBar({
   region,
@@ -29,10 +31,10 @@ export function SubscriptionFilterBar({
   onRegionChange,
   onHouseCategoryChange,
 }: {
-  region: ComplexRegion;
-  houseCategory: HouseCategory;
-  onRegionChange: (region: ComplexRegion) => void;
-  onHouseCategoryChange: (houseCategory: HouseCategory) => void;
+  region: ComplexRegion | undefined;
+  houseCategory: HouseCategory | undefined;
+  onRegionChange: (region: ComplexRegion | undefined) => void;
+  onHouseCategoryChange: (houseCategory: HouseCategory | undefined) => void;
 }) {
   const [openSheet, setOpenSheet] = useState<OpenSheet>(null);
   const close = () => setOpenSheet(null);
@@ -40,76 +42,99 @@ export function SubscriptionFilterBar({
   return (
     <>
       <div className="flex items-center gap-[8px]">
-        <FilterChip label={region} onClick={() => setOpenSheet("region")} />
         <FilterChip
-          label={HOUSE_CATEGORY_LABEL[houseCategory]}
+          label={region ?? ALL_LABEL}
+          onClick={() => setOpenSheet("region")}
+        />
+        <FilterChip
+          label={houseCategory ? HOUSE_CATEGORY_LABEL[houseCategory] : ALL_LABEL}
           onClick={() => setOpenSheet("category")}
         />
       </div>
 
-      <BottomSheet open={openSheet === "region"} onClose={close} title="지역">
-        <ul className="flex max-h-[50vh] flex-col overflow-y-auto">
-          {COMPLEX_REGIONS.map((option) => (
-            <li key={option}>
-              <OptionRow
-                label={option}
-                selected={option === region}
-                onClick={() => {
-                  onRegionChange(option);
-                  close();
-                }}
-              />
-            </li>
-          ))}
-        </ul>
-      </BottomSheet>
+      {openSheet === "region" && (
+        <FilterSheet
+          title="공급 지역 선택"
+          options={[
+            { value: undefined, label: ALL_LABEL },
+            ...COMPLEX_REGIONS.map((r) => ({ value: r, label: r })),
+          ]}
+          current={region}
+          onConfirm={(next) => {
+            onRegionChange(next);
+            close();
+          }}
+          onClose={close}
+        />
+      )}
 
-      <BottomSheet
-        open={openSheet === "category"}
-        onClose={close}
-        title="주택 구분"
-      >
-        <ul className="flex flex-col">
-          {HOUSE_CATEGORIES.map((option) => (
-            <li key={option}>
-              <OptionRow
-                label={HOUSE_CATEGORY_LABEL[option]}
-                selected={option === houseCategory}
-                onClick={() => {
-                  onHouseCategoryChange(option);
-                  close();
-                }}
-              />
-            </li>
-          ))}
-        </ul>
-      </BottomSheet>
+      {openSheet === "category" && (
+        <FilterSheet
+          title="주택 구분 선택"
+          options={[
+            { value: undefined, label: ALL_LABEL },
+            ...HOUSE_CATEGORIES.map((c) => ({
+              value: c,
+              label: HOUSE_CATEGORY_LABEL[c],
+            })),
+          ]}
+          current={houseCategory}
+          onConfirm={(next) => {
+            onHouseCategoryChange(next);
+            close();
+          }}
+          onClose={close}
+        />
+      )}
     </>
   );
 }
 
-function OptionRow({
-  label,
-  selected,
-  onClick,
+function FilterSheet<T extends string>({
+  title,
+  options,
+  current,
+  onConfirm,
+  onClose,
 }: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
+  title: string;
+  options: { value: T | undefined; label: string }[];
+  current: T | undefined;
+  onConfirm: (value: T | undefined) => void;
+  onClose: () => void;
 }) {
+  const [pending, setPending] = useState<T | undefined>(current);
+  const pendingLabel =
+    options.find((option) => option.value === pending)?.label ?? ALL_LABEL;
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={selected}
-      className={cn(
-        "w-full rounded-[6px] px-[12px] py-[12px] text-left text-body-2",
-        selected
-          ? "bg-primary-50 font-bold text-primary"
-          : "font-medium text-foreground"
-      )}
-    >
-      {label}
-    </button>
+    <BottomSheet open onClose={onClose} title={title}>
+      <div className="flex flex-wrap gap-x-[7px] gap-y-[12px]">
+        {options.map((option) => (
+          <button
+            key={option.label}
+            type="button"
+            onClick={() => setPending(option.value)}
+            aria-pressed={option.value === pending}
+            className={cn(
+              "rounded-full border px-[12px] py-[8px] text-body-3 font-medium text-foreground",
+              option.value === pending ? "border-primary" : "border-transparent"
+            )}
+          >
+            <span className="block w-[38px] text-center whitespace-nowrap">
+              {option.label}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onConfirm(pending)}
+        className="mt-[24px] flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
+      >
+        {pendingLabel} 공고 보기
+      </button>
+    </BottomSheet>
   );
 }

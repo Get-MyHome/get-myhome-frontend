@@ -51,10 +51,12 @@ export function SubscriptionSection({
 }: {
   headerOffset?: string;
 } = {}) {
-  // region · houseCategory 를 빼면 백엔드가 500 을 낸다 (버그) — 항상 값을 넘긴다.
-  // "전체(공공+민간)" 조회는 houseCategory 필수 버그 때문에 아직 불가.
-  const [region, setRegion] = useState<ComplexRegion>("서울");
-  const [houseCategory, setHouseCategory] = useState<HouseCategory>("PRIVATE");
+  // undefined = 전체. 다만 백엔드가 region·houseCategory 미입력 시 500 을 낸다 (버그) —
+  // 전체를 고르면 현재는 에러 화면이 뜬다. 기본값은 동작하는 값으로 둔다.
+  const [region, setRegion] = useState<ComplexRegion | undefined>("서울");
+  const [houseCategory, setHouseCategory] = useState<HouseCategory | undefined>(
+    "PRIVATE"
+  );
   const [page, setPage] = useState(1);
 
   const { data, isLoading, isError, refetch } = useComplexesQuery({
@@ -72,13 +74,13 @@ export function SubscriptionSection({
     scrollToTop();
   };
 
-  const handleRegionChange = (next: ComplexRegion) => {
+  const handleRegionChange = (next: ComplexRegion | undefined) => {
     setRegion(next);
     setPage(1);
     scrollToTop();
   };
 
-  const handleHouseCategoryChange = (next: HouseCategory) => {
+  const handleHouseCategoryChange = (next: HouseCategory | undefined) => {
     setHouseCategory(next);
     setPage(1);
     scrollToTop();
