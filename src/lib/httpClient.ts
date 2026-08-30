@@ -10,10 +10,9 @@ export const httpClient = axios.create({
   timeout: 60_000,
 });
 
-/** 에러 응답 body 의 message 를 꺼낸다. 형식이 다르면 fallback */
-export function getApiErrorMessage(error: unknown, fallback: string): string {
-  if (axios.isAxiosError<ApiErrorBody>(error)) {
-    return error.response?.data?.message ?? fallback;
-  }
-  return fallback;
+/** 에러의 HTTP 상태 코드. axios 에러가 아니면 undefined (네트워크 오류 등) */
+export function getHttpStatus(error: unknown): number | undefined {
+  return axios.isAxiosError<ApiErrorBody>(error)
+    ? error.response?.status
+    : undefined;
 }

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import WarningIcon from "@/assets/icons/warning.svg";
+import { ErrorState } from "@/components/ui/errorState";
+import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
 import { useComplexesQuery } from "@/queries/complexes";
 import type {
   ComplexRegion,
@@ -56,21 +57,31 @@ export function SubscriptionSection({
   const [houseCategory, setHouseCategory] = useState<HouseCategory>("PRIVATE");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError } = useComplexesQuery({
+  const { data, isLoading, isError, refetch } = useComplexesQuery({
     region,
     houseCategory,
     page,
     size: PAGE_SIZE,
   });
 
+  // 페이지·필터를 바꾸면 항상 목록 맨 위로
+  const scrollToTop = () => window.scrollTo({ top: 0 });
+
+  const changePage = (updater: (p: number) => number) => {
+    setPage(updater);
+    scrollToTop();
+  };
+
   const handleRegionChange = (next: ComplexRegion) => {
     setRegion(next);
     setPage(1);
+    scrollToTop();
   };
 
   const handleHouseCategoryChange = (next: HouseCategory) => {
     setHouseCategory(next);
     setPage(1);
+    scrollToTop();
   };
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.size)) : 1;
@@ -110,18 +121,15 @@ export function SubscriptionSection({
       )}
 
       {isError && (
-        <p className="px-gutter py-[24px] text-body-2 font-medium text-muted-foreground">
-          목록을 불러오지 못했어요
-        </p>
+        <ErrorState
+          message={E012_NOTICE_LOAD_FAILED}
+          actionLabel="새로고침"
+          onAction={() => refetch()}
+        />
       )}
 
       {data && data.items.length === 0 && (
-        <div className="flex flex-col items-center gap-[10px] pt-[70px]">
-          <WarningIcon aria-hidden="true" className="size-7 text-neutral-300" />
-          <p className="text-body-2 font-medium text-neutral-300">
-            현재 진행중인 청약 공고가 없습니다.
-          </p>
-        </div>
+        <ErrorState message="현재 진행중인 청약 공고가 없습니다." />
       )}
 
       {data && data.items.length > 0 && (
@@ -138,7 +146,7 @@ export function SubscriptionSection({
           <div className="flex items-center justify-center gap-[12px] py-[20px]">
             <button
               type="button"
-              onClick={() => setPage((p) => p - 1)}
+              onClick={() => changePage((p) => p - 1)}
               disabled={page <= 1}
               className="rounded-[6px] border border-border px-[10px] py-[6px] text-body-3 font-medium text-foreground disabled:text-muted-foreground"
             >
@@ -149,7 +157,7 @@ export function SubscriptionSection({
             </span>
             <button
               type="button"
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => changePage((p) => p + 1)}
               disabled={page >= totalPages}
               className="rounded-[6px] border border-border px-[10px] py-[6px] text-body-3 font-medium text-foreground disabled:text-muted-foreground"
             >

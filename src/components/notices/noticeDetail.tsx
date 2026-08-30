@@ -1,16 +1,21 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import BuildingIcon from "@/assets/icons/building.svg";
 import CalendarIcon from "@/assets/icons/calendar.svg";
 import LocationPointIcon from "@/assets/icons/locationPoint.svg";
-import WarningIcon from "@/assets/icons/warning.svg";
 import { UnitTypeSelector } from "@/components/notices/unitTypeSelector";
-import { getApiErrorMessage } from "@/lib/httpClient";
+import { ErrorState } from "@/components/ui/errorState";
+import { E012_NOTICE_LOAD_FAILED, NOTICE_NOT_FOUND } from "@/constants/errors";
+import { getHttpStatus } from "@/lib/httpClient";
 import { useComplexDetailQuery } from "@/queries/complexes";
 import { formatDotDate } from "@/utils/format";
 
 export function NoticeDetail({ complexId }: { complexId: string }) {
-  const { data, isLoading, isError, error } = useComplexDetailQuery(complexId);
+  const router = useRouter();
+  const { data, isLoading, isError, error, refetch } =
+    useComplexDetailQuery(complexId);
 
   const wrapper =
     "flex flex-1 flex-col gap-[30px] px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+12px)]";
@@ -28,12 +33,19 @@ export function NoticeDetail({ complexId }: { complexId: string }) {
   if (isError || !data) {
     return (
       <div className={wrapper}>
-        <div className="flex flex-col items-center gap-[10px] pt-[70px]">
-          <WarningIcon aria-hidden="true" className="size-7 text-neutral-300" />
-          <p className="text-body-2 font-medium text-neutral-300">
-            {getApiErrorMessage(error, "공고 정보를 불러오지 못했어요")}
-          </p>
-        </div>
+        {getHttpStatus(error) === 404 ? (
+          <ErrorState
+            message={NOTICE_NOT_FOUND}
+            actionLabel="목록으로"
+            onAction={() => router.back()}
+          />
+        ) : (
+          <ErrorState
+            message={E012_NOTICE_LOAD_FAILED}
+            actionLabel="새로고침"
+            onAction={() => refetch()}
+          />
+        )}
       </div>
     );
   }
