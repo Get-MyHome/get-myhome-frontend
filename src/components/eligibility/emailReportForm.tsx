@@ -21,12 +21,12 @@ export function EmailReportForm() {
 
   return (
     <div className="relative flex flex-1 flex-col">
-      <div className="flex flex-1 flex-col gap-[8px] px-gutter pt-[26px]">
+      <div className="flex flex-1 flex-col gap-[12px] px-gutter pt-[26px]">
         <h1 className="text-subtitle-2 font-medium text-foreground">
-          이메일 인증을 해주세요.
+          이메일 주소를 입력해주세요.
         </h1>
 
-        <div className="mt-[30px] flex flex-col gap-[8px]">
+        <div className="flex flex-col gap-[8px]">
           <label
             htmlFor="report-email"
             className="text-body-2 font-medium text-neutral-500"
@@ -42,7 +42,7 @@ export function EmailReportForm() {
             onBlur={() => setTouched(true)}
             placeholder="Getmyhome@gmail.com"
             className={cn(
-              "h-[46px] rounded-[8px] border px-[10px] text-body-2 font-medium text-foreground placeholder:text-muted-foreground focus:outline-none",
+              "h-[46px] rounded-[6px] border px-[10px] text-body-2 font-medium text-foreground placeholder:text-muted-foreground focus:outline-none",
               showError ? "border-danger" : "border-primary"
             )}
           />
@@ -52,6 +52,12 @@ export function EmailReportForm() {
             </p>
           )}
         </div>
+
+        <p className="rounded-[6px] bg-muted p-[10px] text-caption-2 font-medium text-neutral-400">
+          판정 결과 자세한 내용을 모아 이메일로 보내드립니다.
+          <br />
+          이메일 주소를 입력해주세요.
+        </p>
       </div>
 
       <button
