@@ -9,7 +9,7 @@ import {
   SUBSCRIPTION_ACCOUNT_TYPES,
   type EligibilityConditions,
 } from "@/types/eligibility";
-import { AMOUNT_MAX_LENGTH, normalizeAmount } from "@/utils/amount";
+import { AMOUNT_MAX_LENGTH, amountSuffix, normalizeAmount } from "@/utils/amount";
 
 /** YYYYMM 6자리만 남긴다 */
 function yearMonthDigits(value: string): string {
@@ -41,7 +41,7 @@ export function OptionalConditionFields({
         value={conditions.monthlySaving}
         onChange={(value) => onChange("monthlySaving", normalizeAmount(value))}
         placeholder="숫자입력"
-        suffix="만원"
+        suffix={amountSuffix(conditions.monthlySaving)}
         inputMode="numeric"
         maxLength={AMOUNT_MAX_LENGTH}
       />
@@ -51,7 +51,7 @@ export function OptionalConditionFields({
         value={conditions.spouseIncome}
         onChange={(value) => onChange("spouseIncome", normalizeAmount(value))}
         placeholder="숫자입력"
-        suffix="만원"
+        suffix={amountSuffix(conditions.spouseIncome)}
         inputMode="numeric"
         maxLength={AMOUNT_MAX_LENGTH}
       />
@@ -74,7 +74,7 @@ export function OptionalConditionFields({
           onChange("existingLoanMonthlyPayment", normalizeAmount(value))
         }
         placeholder="숫자입력"
-        suffix="만원"
+        suffix={amountSuffix(conditions.existingLoanMonthlyPayment)}
         inputMode="numeric"
         maxLength={AMOUNT_MAX_LENGTH}
       />
@@ -86,7 +86,7 @@ export function OptionalConditionFields({
           onChange("existingLoanBalance", normalizeAmount(value))
         }
         placeholder="숫자입력"
-        suffix="만원"
+        suffix={amountSuffix(conditions.existingLoanBalance)}
         inputMode="numeric"
         maxLength={AMOUNT_MAX_LENGTH}
       />
@@ -103,7 +103,7 @@ export function OptionalConditionFields({
         value={conditions.netWorth}
         onChange={(value) => onChange("netWorth", normalizeAmount(value))}
         placeholder="숫자입력"
-        suffix="만원"
+        suffix={amountSuffix(conditions.netWorth)}
         inputMode="numeric"
         maxLength={AMOUNT_MAX_LENGTH}
       />
