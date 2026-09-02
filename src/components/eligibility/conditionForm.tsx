@@ -63,7 +63,7 @@ export function ConditionForm() {
       className="flex flex-1 flex-col px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+12px)]"
       onSubmit={(event) => {
         event.preventDefault();
-        router.push("/eligibility/notices");
+        router.push("/eligibility/loans");
       }}
     >
       <RequiredConditionFields conditions={conditions} onChange={updateField} />
