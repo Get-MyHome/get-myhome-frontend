@@ -68,7 +68,7 @@ export function ExampleReportCard() {
         </ul>
       </div>
 
-      <p className="text-caption-2 font-medium text-neutral-400">
+      <p className="text-center text-caption-2 font-medium text-neutral-400">
         공개 자료 기준으로 계산한 예시에요.
       </p>
     </section>

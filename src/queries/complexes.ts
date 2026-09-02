@@ -53,10 +53,13 @@ export interface RegionCount {
 }
 
 /**
- * 지역별 진행중인 청약 개수. 집계 API 가 없어 지역마다 size=1 로 total 만 읽는다.
- * (지역 필터만 — houseCategory 는 걸지 않음)
+ * 지역별 진행중인 청약 개수 + 데이터 갱신일. 집계 API 가 없어 지역마다 size=1 로
+ * total 만 읽는다. (지역 필터만 — houseCategory 는 걸지 않음)
  */
-export function useRegionCountsQuery(): RegionCount[] {
+export function useRegionCountsQuery(): {
+  counts: RegionCount[];
+  updatedAt: string | null;
+} {
   const results = useQueries({
     queries: COMPLEX_REGIONS.map((region) => ({
       queryKey: ["complexes", "region-count", region] as const,
@@ -65,8 +68,11 @@ export function useRegionCountsQuery(): RegionCount[] {
     })),
   });
 
-  return COMPLEX_REGIONS.map((region, i) => ({
-    region,
-    count: results[i].data?.total ?? null,
-  }));
+  return {
+    counts: COMPLEX_REGIONS.map((region, i) => ({
+      region,
+      count: results[i].data?.total ?? null,
+    })),
+    updatedAt: results.find((r) => r.data)?.data?.updated_at ?? null,
+  };
 }
