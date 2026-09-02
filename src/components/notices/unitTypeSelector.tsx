@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import ExternalLinkIcon from "@/assets/icons/externalLink.svg";
+import InfoCircleIcon from "@/assets/icons/infoCircle.svg";
 import RulerIcon from "@/assets/icons/ruler.svg";
 import { SelectableRow } from "@/components/ui/selectableRow";
 import type { ComplexUnitType } from "@/types/complex";
@@ -32,9 +33,13 @@ export function UnitTypeSelector({
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const hasUnitTypes = unitTypes.length > 0;
+  // 평형 선택지가 없는 공고는 고를 게 없으므로 바로 판정으로 넘어갈 수 있다
+  const canProceed = !hasUnitTypes || selectedId !== null;
+
   return (
     <div className="flex flex-1 flex-col gap-[10px]">
-      {unitTypes.length > 0 && (
+      {hasUnitTypes ? (
         <>
           <p className="flex items-center gap-[6px] text-body-2 font-medium text-foreground">
             <RulerIcon aria-hidden="true" className="size-5 shrink-0" />
@@ -62,17 +67,25 @@ export function UnitTypeSelector({
             })}
           </ul>
         </>
+      ) : (
+        <p className="flex items-center gap-[6px] text-body-2 font-medium text-foreground">
+          <InfoCircleIcon
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground"
+          />
+          해당 공고는 평형선택 조건이 없습니다.
+        </p>
       )}
 
       <div className="mt-auto flex flex-col items-center gap-[10px] pt-[20px]">
         <button
           type="button"
-          disabled={selectedId === null}
+          disabled={!canProceed}
           onClick={() => router.push("/eligibility/result")}
           className={cn(
             "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",
-            selectedId === null ? "bg-primary-400" : "bg-primary"
+            canProceed ? "bg-primary" : "bg-primary-400"
           )}
         >
           가능성 판정하기
