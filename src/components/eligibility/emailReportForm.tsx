@@ -13,9 +13,11 @@ import { cn } from "@/utils/cn";
 export function EmailReportForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [touched, setTouched] = useState(false);
   const [sent, setSent] = useState(false);
 
   const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const showError = touched && email !== "" && !valid;
 
   return (
     <div className="relative flex flex-1 flex-col">
@@ -37,9 +39,18 @@ export function EmailReportForm() {
             inputMode="email"
             value={email}
             onChange={(event) => setEmail(event.target.value.trim())}
+            onBlur={() => setTouched(true)}
             placeholder="Getmyhome@gmail.com"
-            className="h-[46px] rounded-[8px] border border-primary px-[10px] text-body-2 font-medium text-foreground placeholder:text-muted-foreground focus:outline-none"
+            className={cn(
+              "h-[46px] rounded-[8px] border px-[10px] text-body-2 font-medium text-foreground placeholder:text-muted-foreground focus:outline-none",
+              showError ? "border-danger" : "border-primary"
+            )}
           />
+          {showError && (
+            <p className="text-caption-2 font-medium text-danger">
+              이메일 주소가 맞지 않습니다. 다시 입력해주세요.
+            </p>
+          )}
         </div>
       </div>
 
