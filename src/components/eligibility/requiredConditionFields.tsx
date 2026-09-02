@@ -87,8 +87,25 @@ export function RequiredConditionFields({
           required
           value={conditions.maritalStatus}
           options={MARITAL_STATUSES}
-          onChange={(value) => onChange("maritalStatus", value)}
+          onChange={(value) => {
+            onChange("maritalStatus", value);
+            // 미혼으로 바꾸면 배우자 연소득 입력값을 비운다
+            if (value === "미혼") onChange("spouseIncome", "");
+          }}
         />
+
+        {(conditions.maritalStatus === "기혼" ||
+          conditions.maritalStatus === "결혼예정") && (
+          <TextField
+            label="배우자·예비배우자 연소득"
+            value={conditions.spouseIncome}
+            onChange={(value) => onChange("spouseIncome", normalizeAmount(value))}
+            placeholder="숫자입력"
+            suffix={amountSuffix(conditions.spouseIncome)}
+            inputMode="numeric"
+            maxLength={AMOUNT_MAX_LENGTH}
+          />
+        )}
 
         <ChoiceGroup
           label="현재 보유하고 있는 주택이 있나요?"

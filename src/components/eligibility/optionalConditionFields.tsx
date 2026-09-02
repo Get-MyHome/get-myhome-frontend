@@ -47,16 +47,6 @@ export function OptionalConditionFields({
       />
 
       <TextField
-        label="배우자·예비배우자 연소득"
-        value={conditions.spouseIncome}
-        onChange={(value) => onChange("spouseIncome", normalizeAmount(value))}
-        placeholder="숫자입력"
-        suffix={amountSuffix(conditions.spouseIncome)}
-        inputMode="numeric"
-        maxLength={AMOUNT_MAX_LENGTH}
-      />
-
-      <TextField
         label="결혼 예정일 (YYYYMM)"
         value={conditions.marriagePlannedMonth}
         onChange={(value) =>
