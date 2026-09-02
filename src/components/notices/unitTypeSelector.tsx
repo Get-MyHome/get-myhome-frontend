@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import ExternalLinkIcon from "@/assets/icons/externalLink.svg";
@@ -28,6 +29,7 @@ export function UnitTypeSelector({
   unitTypes: ComplexUnitType[];
   sourceUrl: string;
 }) {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (
@@ -63,10 +65,10 @@ export function UnitTypeSelector({
       )}
 
       <div className="mt-auto flex flex-col items-center gap-[10px] pt-[20px]">
-        {/* TODO: 판정 결과 화면(/eligibility/result)이 생기면 라우팅을 붙인다 */}
         <button
           type="button"
           disabled={selectedId === null}
+          onClick={() => router.push("/eligibility/result")}
           className={cn(
             "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",
