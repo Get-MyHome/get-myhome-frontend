@@ -4,7 +4,7 @@ import { EmailReportForm } from "@/components/eligibility/emailReportForm";
 export default function EmailReportPage() {
   return (
     <>
-      <AppBar title="로그인" />
+      <AppBar title="내용 받기" />
       <EmailReportForm />
     </>
   );
