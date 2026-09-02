@@ -27,7 +27,16 @@ function restoreConditions() {
   return {
     conditions: saved ?? EMPTY_CONDITIONS,
     optionalOpen: Boolean(
-      saved && (saved.monthlySaving || saved.householdRole || saved.netWorth)
+      saved &&
+        (saved.incomeType ||
+          saved.monthlySaving ||
+          saved.spouseIncome ||
+          saved.householdRole ||
+          saved.netWorth ||
+          saved.subscriptionAccountType ||
+          saved.allMembersHomeless ||
+          saved.firstTimeBuyer ||
+          saved.hasSubscriptionRight)
     ),
   };
 }
