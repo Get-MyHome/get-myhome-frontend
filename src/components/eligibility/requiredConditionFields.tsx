@@ -8,6 +8,7 @@ import { SelectField } from "@/components/ui/selectField";
 import { TextField } from "@/components/ui/textField";
 import {
   MARITAL_STATUSES,
+  needsSpouseIncome,
   type EligibilityConditions,
   type HomeOwnership,
 } from "@/types/eligibility";
@@ -97,8 +98,7 @@ export function RequiredConditionFields({
         }}
       />
 
-      {(conditions.maritalStatus === "기혼" ||
-        conditions.maritalStatus === "결혼예정") && (
+      {needsSpouseIncome(conditions.maritalStatus) && (
         <TextField
           label="배우자·예비배우자 연소득"
           required

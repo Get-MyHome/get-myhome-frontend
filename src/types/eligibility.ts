@@ -97,6 +97,13 @@ export const EMPTY_CONDITIONS: EligibilityConditions = {
   subscriptionAccountDepositCount: "",
 };
 
+/** 배우자 소득까지 받아야 하는 혼인 상태 (신혼 상품은 부부합산으로 판정한다) */
+export function needsSpouseIncome(
+  maritalStatus: MaritalStatus | null,
+): boolean {
+  return maritalStatus === "기혼" || maritalStatus === "결혼예정";
+}
+
 /** 1단계 필수 항목이 모두 채워졌는지 */
 export function isRequiredComplete(conditions: EligibilityConditions): boolean {
   return (
@@ -104,6 +111,9 @@ export function isRequiredComplete(conditions: EligibilityConditions): boolean {
     conditions.assets !== "" &&
     conditions.birthDate.length === 6 &&
     conditions.maritalStatus !== null &&
-    conditions.homeOwnership !== null
+    conditions.homeOwnership !== null &&
+    // 기혼·결혼예정이면 배우자 연소득도 필수다 (화면에서도 필수 표시된다)
+    (!needsSpouseIncome(conditions.maritalStatus) ||
+      conditions.spouseIncome !== "")
   );
 }

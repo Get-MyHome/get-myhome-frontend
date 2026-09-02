@@ -60,11 +60,11 @@ export function SubscriptionSection({
   /** true 면 조건 토큰으로 매칭된 공고만 (POST /complexes/matched) */
   matched?: boolean;
 } = {}) {
-  // undefined = 전체. 다만 백엔드가 region·houseCategory 미입력 시 500 을 낸다 (버그) —
-  // 전체를 고르면 현재는 에러 화면이 뜬다. 기본값은 동작하는 값으로 둔다.
-  const [region, setRegion] = useState<ComplexRegion | undefined>("서울");
+  // undefined = 전체. 백엔드가 region·houseCategory 미입력 시 500 을 내는 버그가 있어
+  // 전체를 고르면 에러 화면이 뜰 수 있다 (요청에 따라 기본값은 전체로 둠 — 백엔드 수정 필요).
+  const [region, setRegion] = useState<ComplexRegion | undefined>(undefined);
   const [houseCategory, setHouseCategory] = useState<HouseCategory | undefined>(
-    "PRIVATE"
+    undefined
   );
   const [page, setPage] = useState(1);
 
