@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import AlertCircleIcon from "@/assets/icons/alertCircle.svg";
 import BuildingIcon from "@/assets/icons/building.svg";
@@ -17,6 +18,7 @@ const NOTICE =
  * 그대로 정적이다. verdicts API 연동 시 props 로 데이터를 받게 바꾼다.
  */
 export function VerdictResult() {
+  const router = useRouter();
   const [termsOpen, setTermsOpen] = useState(false);
 
   return (
@@ -115,7 +117,10 @@ export function VerdictResult() {
       <TermsAgreementSheet
         open={termsOpen}
         onClose={() => setTermsOpen(false)}
-        onAgree={() => setTermsOpen(false)}
+        onAgree={() => {
+          setTermsOpen(false);
+          router.push("/eligibility/result/email");
+        }}
       />
     </div>
   );
