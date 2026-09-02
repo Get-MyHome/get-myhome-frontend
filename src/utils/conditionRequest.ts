@@ -32,10 +32,15 @@ function toYearMonth(value: string): string | undefined {
     : undefined;
 }
 
-/** YYYYMM 6자리 → YYYY-MM-01 (통장 가입일). API 는 date 형식을 받는다 */
-function toYearMonthDate(value: string): string | undefined {
-  const ym = toYearMonth(value);
-  return ym ? `${ym}-01` : undefined;
+/** 가입기간(개월) → 가입일 YYYY-MM-01. 오늘로부터 N개월 전 달의 1일 */
+function monthsAgoToDate(months: string): string | undefined {
+  const n = num(months);
+  if (n == null) return undefined;
+  const d = new Date();
+  d.setMonth(d.getMonth() - n);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}-01`;
 }
 
 function num(value: string | undefined): number | undefined {
@@ -61,14 +66,12 @@ export function toUserConditionRequest(
     return null;
   }
 
-  const account =
-    c.subscriptionAccountType && c.subscriptionAccountType !== "없음"
-      ? {
-          type: c.subscriptionAccountType,
-          opened_at: toYearMonthDate(c.subscriptionAccountOpenedMonth),
-          deposit_count: num(c.subscriptionAccountDepositCount),
-        }
-      : undefined;
+  const account = c.hasSubscriptionAccount
+    ? {
+        opened_at: monthsAgoToDate(c.subscriptionAccountMonths),
+        deposit_count: num(c.subscriptionAccountDepositCount),
+      }
+    : undefined;
 
   return {
     annual_income: Number(c.annualIncome),
@@ -86,8 +89,12 @@ export function toUserConditionRequest(
     monthly_saving: num(c.monthlySaving),
     spouse_income: num(c.spouseIncome),
     marriage_planned_date: toYearMonth(c.marriagePlannedMonth),
-    existing_loan_monthly_payment: num(c.existingLoanMonthlyPayment),
-    existing_loan_balance: num(c.existingLoanBalance),
+    existing_loan_monthly_payment: c.hasExistingLoan
+      ? num(c.existingLoanMonthlyPayment)
+      : undefined,
+    existing_loan_balance: c.hasExistingLoan
+      ? num(c.existingLoanBalance)
+      : undefined,
     household_type: c.householdRole
       ? HOUSEHOLD_TYPE_MAP[c.householdRole]
       : undefined,

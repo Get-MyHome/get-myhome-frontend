@@ -48,6 +48,10 @@ export interface EligibilityConditions {
   existingLoanMonthlyPayment: string;
   /** 기존 대출 잔액 (만원) */
   existingLoanBalance: string;
+  /** 기존 대출 보유 여부 */
+  hasExistingLoan: boolean;
+  /** 정책대출(디딤돌·청년주택드림) 조건도 확인할지 */
+  checkPolicyLoan: boolean;
   householdRole: HouseholdRole | null;
   allMembersHomeless: boolean;
   /** 순자산 본인·배우자 합산 (만원) */
@@ -55,7 +59,11 @@ export interface EligibilityConditions {
   /** 분양권·입주권 보유 여부 */
   hasSubscriptionRight: boolean;
   firstTimeBuyer: boolean;
+  /** 청약통장 보유 여부 */
+  hasSubscriptionAccount: boolean;
   subscriptionAccountType: SubscriptionAccountType | null;
+  /** 청약통장 가입기간 (개월) */
+  subscriptionAccountMonths: string;
   /** 청약통장 가입 연월 6자리 (YYYYMM) */
   subscriptionAccountOpenedMonth: string;
   /** 청약통장 납입 횟수 */
@@ -75,12 +83,16 @@ export const EMPTY_CONDITIONS: EligibilityConditions = {
   marriagePlannedMonth: "",
   existingLoanMonthlyPayment: "",
   existingLoanBalance: "",
+  hasExistingLoan: false,
+  checkPolicyLoan: false,
   householdRole: null,
   allMembersHomeless: false,
   netWorth: "",
   hasSubscriptionRight: false,
   firstTimeBuyer: false,
+  hasSubscriptionAccount: false,
   subscriptionAccountType: null,
+  subscriptionAccountMonths: "",
   subscriptionAccountOpenedMonth: "",
   subscriptionAccountDepositCount: "",
 };

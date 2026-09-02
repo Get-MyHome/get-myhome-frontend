@@ -1,22 +1,24 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { ChoiceGroup } from "@/components/ui/choiceGroup";
 import { SelectField } from "@/components/ui/selectField";
 import { TextField } from "@/components/ui/textField";
 import {
   HOUSEHOLD_ROLES,
-  INCOME_TYPES,
-  SUBSCRIPTION_ACCOUNT_TYPES,
   type EligibilityConditions,
 } from "@/types/eligibility";
 import { AMOUNT_MAX_LENGTH, amountSuffix, normalizeAmount } from "@/utils/amount";
 
-/** YYYYMM 6자리만 남긴다 */
-function yearMonthDigits(value: string): string {
-  return value.replace(/[^0-9]/g, "").slice(0, 6);
+const YES_NO = [
+  { value: "yes", label: "예" },
+  { value: "no", label: "아니오" },
+] as const;
+
+function digits(value: string, max: number): string {
+  return value.replace(/[^0-9]/g, "").slice(0, max);
 }
 
-/** 2단계 선택 입력. 판정 정확도를 높이는 항목들로 전부 필수가 아니다 */
+/** 2단계 정밀 입력 (Figma 14:1449). 예/아니오 + 금액 위주 */
 export function OptionalConditionFields({
   conditions,
   onChange,
@@ -27,38 +29,27 @@ export function OptionalConditionFields({
     value: EligibilityConditions[Key],
   ) => void;
 }) {
+  const yesNo = (key: keyof EligibilityConditions, label: string) => (
+    <ChoiceGroup
+      label={label}
+      required
+      value={conditions[key] ? "yes" : "no"}
+      options={YES_NO}
+      onChange={(value) => onChange(key, (value === "yes") as never)}
+    />
+  );
+
   return (
     <div className="flex flex-col gap-5">
-      <SelectField
-        label="소득 형태"
-        value={conditions.incomeType}
-        options={INCOME_TYPES}
-        onChange={(value) => onChange("incomeType", value)}
-      />
+      <p className="text-body-2 font-medium text-foreground">
+        상세 내용을 채우면 바로 볼 수 있어요.
+      </p>
+
+      {yesNo("hasExistingLoan", "기존 대출이 있으신가요?")}
 
       <TextField
-        label="월 저축 가능액"
-        value={conditions.monthlySaving}
-        onChange={(value) => onChange("monthlySaving", normalizeAmount(value))}
-        placeholder="숫자입력"
-        suffix={amountSuffix(conditions.monthlySaving)}
-        inputMode="numeric"
-        maxLength={AMOUNT_MAX_LENGTH}
-      />
-
-      <TextField
-        label="결혼 예정일 (YYYYMM)"
-        value={conditions.marriagePlannedMonth}
-        onChange={(value) =>
-          onChange("marriagePlannedMonth", yearMonthDigits(value))
-        }
-        placeholder="예: 202705"
-        inputMode="numeric"
-        maxLength={6}
-      />
-
-      <TextField
-        label="기존 대출 월 상환액"
+        label="월 원리금 상환액"
+        required
         value={conditions.existingLoanMonthlyPayment}
         onChange={(value) =>
           onChange("existingLoanMonthlyPayment", normalizeAmount(value))
@@ -69,27 +60,24 @@ export function OptionalConditionFields({
         maxLength={AMOUNT_MAX_LENGTH}
       />
 
-      <TextField
-        label="기존 대출 잔액"
-        value={conditions.existingLoanBalance}
-        onChange={(value) =>
-          onChange("existingLoanBalance", normalizeAmount(value))
-        }
-        placeholder="숫자입력"
-        suffix={amountSuffix(conditions.existingLoanBalance)}
-        inputMode="numeric"
-        maxLength={AMOUNT_MAX_LENGTH}
-      />
+      {yesNo(
+        "checkPolicyLoan",
+        "정책대출(디딤돌·청년주택드림 등) 조건도 확인하시겠어요?",
+      )}
 
       <SelectField
-        label="세대 구성"
+        label="세대구성"
+        required
         value={conditions.householdRole}
         options={HOUSEHOLD_ROLES}
         onChange={(value) => onChange("householdRole", value)}
       />
 
+      {yesNo("allMembersHomeless", "세대원 전원 무주택인가요?")}
+
       <TextField
         label="순자산 (본인·배우자 합산)"
+        required
         value={conditions.netWorth}
         onChange={(value) => onChange("netWorth", normalizeAmount(value))}
         placeholder="숫자입력"
@@ -98,59 +86,55 @@ export function OptionalConditionFields({
         maxLength={AMOUNT_MAX_LENGTH}
       />
 
-      <SelectField
-        label="청약통장 종류"
-        value={conditions.subscriptionAccountType}
-        options={SUBSCRIPTION_ACCOUNT_TYPES}
-        onChange={(value) => onChange("subscriptionAccountType", value)}
-      />
+      {yesNo("firstTimeBuyer", "생애최초 여부")}
 
-      <TextField
-        label="청약통장 가입 연월 (YYYYMM)"
-        value={conditions.subscriptionAccountOpenedMonth}
-        onChange={(value) =>
-          onChange("subscriptionAccountOpenedMonth", yearMonthDigits(value))
-        }
-        placeholder="예: 202301"
-        inputMode="numeric"
-        maxLength={6}
-      />
+      <div className="flex flex-col gap-[10px]">
+        {yesNo("hasSubscriptionAccount", "청약통장이 있으신가요?")}
 
-      <TextField
-        label="청약통장 납입 횟수"
-        value={conditions.subscriptionAccountDepositCount}
-        onChange={(value) =>
-          onChange(
-            "subscriptionAccountDepositCount",
-            value.replace(/[^0-9]/g, "").slice(0, 4),
-          )
-        }
-        placeholder="숫자입력"
-        suffix="회"
-        inputMode="numeric"
-        maxLength={4}
-      />
-
-      <div className="flex flex-col gap-[12px]">
-        <Checkbox
-          checked={conditions.allMembersHomeless}
-          onChange={(checked) => onChange("allMembersHomeless", checked)}
-        >
-          세대원 전원 무주택
-        </Checkbox>
-        <Checkbox
-          checked={conditions.firstTimeBuyer}
-          onChange={(checked) => onChange("firstTimeBuyer", checked)}
-        >
-          생애최초 주택 구입
-        </Checkbox>
-        <Checkbox
-          checked={conditions.hasSubscriptionRight}
-          onChange={(checked) => onChange("hasSubscriptionRight", checked)}
-        >
-          분양권·입주권 보유
-        </Checkbox>
+        <div className="grid grid-cols-2 gap-[11px]">
+          <label className="flex items-center rounded-[6px] border border-primary-400 p-[10px] text-body-2 font-medium text-neutral-300 focus-within:border-primary">
+            <input
+              inputMode="numeric"
+              value={conditions.subscriptionAccountMonths}
+              onChange={(event) =>
+                onChange(
+                  "subscriptionAccountMonths",
+                  digits(event.target.value, 3),
+                )
+              }
+              placeholder="가입기간"
+              className="min-w-0 flex-1 bg-transparent text-foreground placeholder:text-neutral-300 focus:outline-none"
+            />
+            개월
+          </label>
+          <label className="flex items-center rounded-[6px] border border-primary-400 p-[10px] text-body-2 font-medium text-neutral-300 focus-within:border-primary">
+            <input
+              inputMode="numeric"
+              value={conditions.subscriptionAccountDepositCount}
+              onChange={(event) =>
+                onChange(
+                  "subscriptionAccountDepositCount",
+                  digits(event.target.value, 4),
+                )
+              }
+              placeholder="납입횟수"
+              className="min-w-0 flex-1 bg-transparent text-foreground placeholder:text-neutral-300 focus:outline-none"
+            />
+            회
+          </label>
+        </div>
       </div>
+
+      <TextField
+        label="월 저축 가능액"
+        required
+        value={conditions.monthlySaving}
+        onChange={(value) => onChange("monthlySaving", normalizeAmount(value))}
+        placeholder="숫자입력"
+        suffix={amountSuffix(conditions.monthlySaving)}
+        inputMode="numeric"
+        maxLength={AMOUNT_MAX_LENGTH}
+      />
     </div>
   );
 }
