@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQueries, useQuery } from "@tanstack/react-query";
 
 import {
   fetchComplexDetail,
@@ -7,6 +7,7 @@ import {
   type FetchComplexesParams,
   type FetchMatchedComplexesParams,
 } from "@/apis/complexes";
+import { COMPLEX_REGIONS, type ComplexRegion } from "@/types/complex";
 
 export const complexKeys = {
   list: (params: FetchComplexesParams) => ["complexes", params] as const,
@@ -44,4 +45,28 @@ export function useComplexDetailQuery(complexId: string) {
     queryKey: complexKeys.detail(complexId),
     queryFn: () => fetchComplexDetail(complexId),
   });
+}
+
+export interface RegionCount {
+  region: ComplexRegion;
+  count: number | null;
+}
+
+/**
+ * 지역별 진행중인 청약 개수. 집계 API 가 없어 지역마다 size=1 로 total 만 읽는다.
+ * (지역 필터만 — houseCategory 는 걸지 않음)
+ */
+export function useRegionCountsQuery(): RegionCount[] {
+  const results = useQueries({
+    queries: COMPLEX_REGIONS.map((region) => ({
+      queryKey: ["complexes", "region-count", region] as const,
+      queryFn: () => fetchComplexes({ region, page: 1, size: 1 }),
+      staleTime: 5 * 60 * 1000,
+    })),
+  });
+
+  return COMPLEX_REGIONS.map((region, i) => ({
+    region,
+    count: results[i].data?.total ?? null,
+  }));
 }
