@@ -171,7 +171,7 @@ export function LoanRouteList() {
       <div className="mt-auto flex flex-col items-center gap-[10px] pt-[20px]">
         <button
           type="button"
-          onClick={() => router.push("/eligibility")}
+          onClick={() => router.push("/eligibility/loans/detail")}
           className="flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
         >
           더 정확하게 알아보기

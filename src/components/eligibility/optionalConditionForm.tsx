@@ -5,23 +5,23 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   EMPTY_CONDITIONS,
-  isRequiredComplete,
   type EligibilityConditions,
 } from "@/types/eligibility";
-import { cn } from "@/utils/cn";
 import { CONDITIONS_STORAGE_KEY } from "@/constants/storage";
 import { readSessionState, writeSessionState } from "@/utils/sessionState";
 
-import { RequiredConditionFields } from "./requiredConditionFields";
+import { OptionalConditionFields } from "./optionalConditionFields";
 
 /**
- * 1단계 — 필수 5개(+전세보증금 선택). 제출하면 대출 상품 화면으로.
- * 2단계(정밀 입력)는 대출 상품 화면의 [더 정확하게 알아보기]에서 별도 페이지로 받는다.
+ * 2단계 정밀 입력. 대출 상품 화면의 [더 정확하게 알아보기]에서 진입한다.
+ * 제출하면 대출 상품 화면으로 돌아가고, 그쪽이 확장된 조건으로 다시 조회한다.
  */
-export function ConditionForm() {
+export function OptionalConditionForm() {
   const router = useRouter();
   const [conditions, setConditions] = useState<EligibilityConditions>(
-    () => readSessionState<EligibilityConditions>(CONDITIONS_STORAGE_KEY) ?? EMPTY_CONDITIONS
+    () =>
+      readSessionState<EligibilityConditions>(CONDITIONS_STORAGE_KEY) ??
+      EMPTY_CONDITIONS
   );
 
   useEffect(() => {
@@ -39,8 +39,6 @@ export function ConditionForm() {
     []
   );
 
-  const submittable = isRequiredComplete(conditions);
-
   return (
     <form
       className="flex flex-1 flex-col px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+12px)]"
@@ -49,18 +47,13 @@ export function ConditionForm() {
         router.push("/eligibility/loans");
       }}
     >
-      <RequiredConditionFields conditions={conditions} onChange={updateField} />
+      <OptionalConditionFields conditions={conditions} onChange={updateField} />
 
       <button
         type="submit"
-        disabled={!submittable}
-        className={cn(
-          "mt-auto flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
-          "text-subtitle-4 font-bold text-white",
-          submittable ? "bg-primary" : "bg-primary-400"
-        )}
+        className="mt-auto flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
       >
-        다음
+        이 조건으로 다시 계산하기
       </button>
     </form>
   );
