@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 /**
  * 화면을 벗어났다 돌아와도 입력값이 남아 있도록 sessionStorage 에 임시 보관한다.
  * 소득·자산을 다루므로 localStorage 가 아니라 탭을 닫으면 사라지는
@@ -29,4 +31,33 @@ export function clearSessionState(key: string): void {
   } catch {
     // 저장 불가 환경에서는 지울 것도 없다
   }
+}
+
+const subscribeNoop = () => () => {};
+
+/** SSR 에서는 false, 클라이언트 마운트 후 true. 하이드레이션 불일치 없이 안전하게 갈린다 */
+export function useIsMounted(): boolean {
+  return useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false
+  );
+}
+
+/**
+ * sessionStorage 원문(JSON 문자열)을 마운트 후 읽는다. SSR·미저장 시 null.
+ * 파싱은 호출부에서 원문 문자열에 useMemo 를 걸어 참조를 안정화한다.
+ */
+export function useSessionRaw(key: string): string | null {
+  return useSyncExternalStore(
+    subscribeNoop,
+    () => {
+      try {
+        return sessionStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    },
+    () => null
+  );
 }

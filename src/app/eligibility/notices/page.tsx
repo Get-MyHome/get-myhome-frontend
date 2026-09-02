@@ -6,7 +6,10 @@ export default function NoticeSelectPage() {
     <>
       <AppBar title="청약 공고 선택" />
       <div className="flex flex-1 flex-col px-gutter pt-[13px]">
-        <SubscriptionSection headerOffset="top-[calc(env(safe-area-inset-top)+56px)]" />
+        <SubscriptionSection
+          matched
+          headerOffset="top-[calc(env(safe-area-inset-top)+56px)]"
+        />
       </div>
     </>
   );

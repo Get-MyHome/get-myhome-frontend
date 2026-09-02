@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 import InfoCircleIcon from "@/assets/icons/infoCircle.svg";
@@ -18,7 +18,8 @@ import { cn } from "@/utils/cn";
 import { toUserConditionRequest } from "@/utils/conditionRequest";
 import { formatManwonToEok } from "@/utils/format";
 import {
-  readSessionState,
+  useIsMounted,
+  useSessionRaw,
   writeSessionState,
 } from "@/utils/sessionState";
 
@@ -48,19 +49,22 @@ export function LoanRouteList() {
   const router = useRouter();
 
   // sessionStorage 는 클라이언트에서만 — 마운트 후에 읽어 하이드레이션 불일치를 피한다.
-  // undefined = 아직 안 읽음, null = 읽었으나 조건 미완성
-  const [user, setUser] = useState<
-    ReturnType<typeof toUserConditionRequest> | undefined
-  >(undefined);
+  const mounted = useIsMounted();
+  const rawConditions = useSessionRaw(CONDITIONS_STORAGE_KEY);
+  const user = useMemo(() => {
+    if (rawConditions === null) return null;
+    try {
+      return toUserConditionRequest(
+        JSON.parse(rawConditions) as EligibilityConditions
+      );
+    } catch {
+      return null;
+    }
+  }, [rawConditions]);
 
-  useEffect(() => {
-    const conditions = readSessionState<EligibilityConditions>(
-      CONDITIONS_STORAGE_KEY
-    );
-    setUser(conditions ? toUserConditionRequest(conditions) : null);
-  }, []);
-
-  const { data, isLoading, isError, refetch } = useFinancingRoutesQuery(user);
+  const { data, isLoading, isError, refetch } = useFinancingRoutesQuery(
+    mounted ? user : undefined
+  );
 
   useEffect(() => {
     if (data?.condition_token) {
@@ -71,7 +75,7 @@ export function LoanRouteList() {
   const wrapper =
     "flex flex-1 flex-col px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+12px)]";
 
-  if (user === undefined || isLoading) {
+  if (!mounted || isLoading) {
     return (
       <div className={wrapper}>
         <p className="py-[24px] text-body-2 font-medium text-muted-foreground">

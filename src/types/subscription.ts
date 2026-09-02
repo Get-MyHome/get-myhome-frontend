@@ -22,6 +22,8 @@ export interface HousingSubscription {
   address: string;
   /** 대표 분양가. 원 단위. 주택형 정보 미등록 공고는 null */
   price: number | null;
+  /** 매칭 결과에서만 — 이 공고를 감당 가능한 대출 상품명 */
+  matchedProductNames?: string[];
   /** 입주 예정. ISO 연월(YYYY-MM) */
   moveInMonth: string;
   /** 주택형별 분양가 */

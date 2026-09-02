@@ -19,6 +19,8 @@ export interface ComplexSummary {
   /** 대표 분양가 (첫 주택형 기준, 만원). 주택형 미등록이면 null */
   sale_price: number | null;
   is_judgeable: boolean;
+  /** POST /complexes/matched 응답에서만 — 이 공고를 감당할 수 있는 대출 상품명 */
+  matched_product_names?: string[];
 }
 
 export interface ComplexListResponse {
