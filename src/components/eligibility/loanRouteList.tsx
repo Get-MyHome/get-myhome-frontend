@@ -7,6 +7,7 @@ import InfoCircleIcon from "@/assets/icons/infoCircle.svg";
 import MoneyStackIcon from "@/assets/icons/moneyStack.svg";
 import { ErrorState } from "@/components/ui/errorState";
 import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
+import { LOAN_PRODUCT_DESCRIPTION } from "@/constants/loanProducts";
 import {
   CONDITIONS_STORAGE_KEY,
   FINANCING_TOKEN_STORAGE_KEY,
@@ -137,6 +138,9 @@ export function LoanRouteList() {
               <h3 className="text-body-2 font-bold text-foreground">
                 {route.product_name}
               </h3>
+              <p className="text-caption-2 font-medium text-muted-foreground">
+                {LOAN_PRODUCT_DESCRIPTION[route.product_code]}
+              </p>
               <p
                 className={cn(
                   "text-subtitle-3 font-bold",

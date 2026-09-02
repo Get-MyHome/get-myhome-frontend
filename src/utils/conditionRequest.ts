@@ -38,8 +38,10 @@ function toYearMonthDate(value: string): string | undefined {
   return ym ? `${ym}-01` : undefined;
 }
 
-function num(value: string): number | undefined {
-  return value === "" ? undefined : Number(value);
+function num(value: string | undefined): number | undefined {
+  if (value == null || value === "") return undefined;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : undefined;
 }
 
 /**
