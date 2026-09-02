@@ -12,8 +12,16 @@ export function SubscriptionCard({
 }: {
   subscription: HousingSubscription;
 }) {
-  const { id, supplyType, supplyTypeLabel, deadline, name, address, price } =
-    subscription;
+  const {
+    id,
+    supplyType,
+    supplyTypeLabel,
+    deadline,
+    name,
+    address,
+    price,
+    matchedProductNames,
+  } = subscription;
 
   return (
     <Link
@@ -35,6 +43,19 @@ export function SubscriptionCard({
             분양가 {price === null ? "미정" : formatEok(price)}
           </p>
         </div>
+
+        {matchedProductNames && matchedProductNames.length > 0 && (
+          <ul className="flex flex-wrap gap-[4px]">
+            {matchedProductNames.map((productName) => (
+              <li
+                key={productName}
+                className="rounded-[4px] bg-primary-subtle px-[6px] py-[2px] text-caption-2 font-medium text-primary"
+              >
+                {productName}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <ChevronRightIcon

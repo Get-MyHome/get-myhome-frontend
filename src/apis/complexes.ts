@@ -37,3 +37,29 @@ export async function fetchComplexDetail(
   );
   return data.data;
 }
+
+export interface FetchMatchedComplexesParams {
+  /** 대출 자격 조회로 받은 조건 토큰 (30분 유효) */
+  conditionToken: string;
+  region?: ComplexRegion;
+  houseCategory?: HouseCategory;
+  page?: number;
+  size?: number;
+}
+
+/** POST /complexes/matched — 조건에 맞는 공고 + 감당 가능한 대출명(matched_product_names) */
+export async function fetchMatchedComplexes(
+  params: FetchMatchedComplexesParams
+): Promise<ComplexListResponse> {
+  const { data } = await httpClient.post<ApiResponse<ComplexListResponse>>(
+    "/complexes/matched",
+    {
+      condition_token: params.conditionToken,
+      region: params.region,
+      house_category: params.houseCategory,
+      page: params.page,
+      size: params.size,
+    }
+  );
+  return data.data;
+}

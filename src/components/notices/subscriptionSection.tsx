@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/ui/errorState";
 import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
-import { useComplexesQuery } from "@/queries/complexes";
+import { FINANCING_TOKEN_STORAGE_KEY } from "@/constants/storage";
+import {
+  useComplexesQuery,
+  useMatchedComplexesQuery,
+} from "@/queries/complexes";
 import type {
   ComplexRegion,
   ComplexSummary,
@@ -13,6 +17,7 @@ import type {
 import type { HousingSubscription, SupplyType } from "@/types/subscription";
 import { cn } from "@/utils/cn";
 import { formatDotDate } from "@/utils/format";
+import { useIsMounted, useSessionRaw } from "@/utils/sessionState";
 
 import { SubscriptionCard } from "./subscriptionCard";
 import { SubscriptionFilterBar } from "./subscriptionFilterBar";
@@ -37,6 +42,7 @@ function mapComplexToSubscription(complex: ComplexSummary): HousingSubscription 
     moveInMonth: complex.expected_move_in,
     unitTypes: [],
     noticeUrl: "",
+    matchedProductNames: complex.matched_product_names,
   };
 }
 
@@ -48,8 +54,11 @@ const PAGE_SIZE = 20;
  */
 export function SubscriptionSection({
   headerOffset = "top-[env(safe-area-inset-top)]",
+  matched = false,
 }: {
   headerOffset?: string;
+  /** true 면 조건 토큰으로 매칭된 공고만 (POST /complexes/matched) */
+  matched?: boolean;
 } = {}) {
   // undefined = 전체. 다만 백엔드가 region·houseCategory 미입력 시 500 을 낸다 (버그) —
   // 전체를 고르면 현재는 에러 화면이 뜬다. 기본값은 동작하는 값으로 둔다.
@@ -59,12 +68,34 @@ export function SubscriptionSection({
   );
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError, refetch } = useComplexesQuery({
-    region,
-    houseCategory,
-    page,
-    size: PAGE_SIZE,
-  });
+  // 매칭 모드에서만 필요. 마운트 후 sessionStorage 에서 읽는다.
+  const mounted = useIsMounted();
+  const rawToken = useSessionRaw(FINANCING_TOKEN_STORAGE_KEY);
+  const conditionToken = useMemo(() => {
+    if (!matched || rawToken === null) return null;
+    try {
+      return JSON.parse(rawToken) as string;
+    } catch {
+      return null;
+    }
+  }, [matched, rawToken]);
+  const tokenPending = matched && !mounted;
+
+  const allQuery = useComplexesQuery(
+    { region, houseCategory, page, size: PAGE_SIZE },
+    { enabled: !matched }
+  );
+  const matchedQuery = useMatchedComplexesQuery(
+    {
+      conditionToken: conditionToken ?? "",
+      region,
+      houseCategory,
+      page,
+      size: PAGE_SIZE,
+    },
+    { enabled: matched && mounted && Boolean(conditionToken) }
+  );
+  const { data, isLoading, isError, refetch } = matched ? matchedQuery : allQuery;
 
   // 페이지·필터를 바꾸면 항상 목록 맨 위로
   const scrollToTop = () => window.scrollTo({ top: 0 });
@@ -116,7 +147,11 @@ export function SubscriptionSection({
         />
       </div>
 
-      {isLoading && (
+      {matched && mounted && conditionToken === null && (
+        <ErrorState message="대출 자격 조회를 먼저 진행해주세요." />
+      )}
+
+      {(isLoading || tokenPending) && (
         <p className="px-gutter py-[24px] text-body-2 font-medium text-muted-foreground">
           불러오는 중이에요
         </p>
