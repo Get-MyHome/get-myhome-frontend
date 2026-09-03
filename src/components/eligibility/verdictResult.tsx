@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import BuildingIcon from "@/assets/icons/building.svg";
+import ChevronRightIcon from "@/assets/icons/chevronRight.svg";
 import ErrorSmallIcon from "@/assets/icons/errorSmall.svg";
 import LocationPointIcon from "@/assets/icons/locationPoint.svg";
 import StageBlockIcon from "@/assets/icons/stageBlock.svg";
@@ -45,10 +46,25 @@ const NOTICE =
 /** 이메일 판정지에만 담기는 항목. 화면이 길어지지 않게 여기서는 목록만 안내한다 */
 const REPORT_ONLY_SECTIONS = [
   "공고문 분석 요약",
-  "대출 상품별 잔금 비교",
+  "대출 상품별 판정 (한도·판정 기준)",
+  "청약 자격 판정 (특별공급·일반공급)",
+  "구간별 가용 금액과 부족 해소 기간",
+  "대출 상품별 잔금 비교 (보수 기준 부족액)",
   "중도금 금융조달 상세 (회차·이자 방식)",
   "공고문 위험조항 및 원문 근거",
+  "계약 전 확인 사항",
 ];
+
+const SUBSCRIPTION_TYPE_LABEL: Record<string, string> = {
+  SUB_NEWLYWED: "신혼부부 특별공급",
+  SUB_FIRST: "생애최초 특별공급",
+  SUB_GENERAL: "일반공급",
+};
+
+/** HOLD 사유별 안내. 조건 추가 입력에서 답하면 풀린다 */
+const ELIGIBILITY_HOLD_MESSAGE: Record<string, string> = {
+  NEED_FIRST_TIME_BUYER_INFO: "생애최초 주택 구입 여부를 입력해 주세요.",
+};
 
 const STATUS_LABEL: Record<VerdictStatus, string> = {
   OK: "가능",
@@ -66,15 +82,7 @@ function StageIcon({ status }: { status: VerdictStatus }) {
 }
 
 /** 구간 한 줄 + 아래로 이어지는 세로선. 마지막 구간은 선을 그리지 않는다 */
-function StageRow({
-  stage,
-  label,
-  last,
-}: {
-  stage: StageVerdict;
-  label: string;
-  last: boolean;
-}) {
+function StageRow({ stage, last }: { stage: StageVerdict; last: boolean }) {
   const note = stage.reason_summary;
   // 부족이 없는 구간은 gap 키가 아예 없다. === null 로만 거르면 undefined 가
   // 그대로 포맷 함수로 넘어가 NaN 이 찍힌다
@@ -88,7 +96,7 @@ function StageRow({
         <span className="flex min-w-0 items-center gap-[6px]">
           <StageIcon status={stage.status} />
           <span className="text-body-2 font-bold text-foreground">
-            {label}
+            {STAGE_LABEL[stage.stage]}
           </span>
           {amount && (
             <span className="text-body-2 font-medium text-supply-private">
@@ -227,14 +235,10 @@ export function VerdictResult() {
   const awaitingReview =
     selectedComplex && meta?.analysis_review_status !== "REVIEWED";
 
-  // 알선 범위 밖 자납분이 있으면 INTERIM required 는 중도금 총액이 아니다.
-  // 그냥 "중도금" 으로 두면 아래 임계선의 "최소 필요 60%" 와 어긋나 보인다
-  const interimSelfFunded =
-    data.interim_financing_detail?.confirmed?.self_funding_required === true;
-  const stageLabel = (stage: StageVerdict["stage"]) =>
-    stage === "INTERIM" && interimSelfFunded
-      ? "중도금 자납분"
-      : STAGE_LABEL[stage];
+  // 청약 자격 중 답을 더 받아야 풀리는 항목. 사용자가 직접 해소할 수 있다
+  const heldEligibilities = (data.subscription_eligibilities ?? []).filter(
+    (item) => item.status === "HOLD"
+  );
 
   return (
     <div className={wrapper}>
@@ -310,7 +314,6 @@ export function VerdictResult() {
               <StageRow
                 key={stage.stage}
                 stage={stage}
-                label={stageLabel(stage.stage)}
                 last={index === stages.length - 1}
               />
             ))}
@@ -358,6 +361,38 @@ export function VerdictResult() {
             </span>
           )}
         </p>
+      )}
+
+      {/* 답을 더 받으면 풀리는 항목. 판정 자체보다 사용자가 할 수 있는 일이라 앞에 둔다 */}
+      {heldEligibilities.length > 0 && (
+        <section className="flex flex-col gap-[10px]">
+          <h3 className="text-body-2 font-bold text-foreground">
+            청약 자격 확인 필요
+          </h3>
+          <div className="flex flex-col gap-[10px] rounded-[6px] bg-warning-subtle p-[12px]">
+            <ul className="flex flex-col gap-[8px]">
+              {heldEligibilities.map((item) => (
+                <li key={item.type} className="flex flex-col gap-[2px]">
+                  <span className="text-body-3 font-bold text-warning-foreground">
+                    {SUBSCRIPTION_TYPE_LABEL[item.type] ?? item.type}
+                  </span>
+                  <span className="text-body-3 font-medium text-warning-foreground">
+                    {ELIGIBILITY_HOLD_MESSAGE[item.reason_code ?? ""] ??
+                      "추가 정보를 입력하면 판정할 수 있어요."}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={() => router.push("/eligibility/loans/detail")}
+              className="flex items-center self-start text-caption-2 font-medium text-info"
+            >
+              조건 추가 입력하기
+              <ChevronRightIcon aria-hidden="true" className="size-[18px] shrink-0" />
+            </button>
+          </div>
+        </section>
       )}
 
       {/* 미래규정 시나리오 — 디자인상 준비 중 */}

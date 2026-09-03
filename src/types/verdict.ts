@@ -90,6 +90,17 @@ export interface InterimCriticalLine {
   disclaimer: string | null;
 }
 
+/** 청약 자격 1차 판정. 특별공급·일반공급별로 따로 내려온다 */
+export type SubscriptionType = "SUB_NEWLYWED" | "SUB_FIRST" | "SUB_GENERAL";
+
+export interface SubscriptionEligibility {
+  type: SubscriptionType;
+  status: VerdictStatus;
+  /** HOLD 일 때만 온다. 무엇을 더 받아야 하는지 가리킨다 */
+  reason_code?: string | null;
+  evidence_ids?: string[];
+}
+
 /**
  * 중도금 조달 구조. 사업주체 알선 범위 밖에 자납분이 있으면
  * verdicts 의 INTERIM required 는 중도금 총액이 아니라 그 자납분이다.
@@ -121,6 +132,7 @@ export interface VerdictResult {
   first_shortfall_stage: VerdictStage | null;
   first_shortfall_gap: number | null;
   financing_routes: VerdictFinancingRoute[] | null;
+  subscription_eligibilities: SubscriptionEligibility[] | null;
   verdicts: StageVerdict[] | null;
   interim_critical_line: InterimCriticalLine | null;
   interim_financing_detail: InterimFinancingDetail | null;
