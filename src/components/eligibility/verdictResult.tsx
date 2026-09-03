@@ -49,27 +49,6 @@ const REPORT_ONLY_SECTIONS = [
   "공고문 위험조항 및 원문 근거",
 ];
 
-/**
- * 결과를 확정하려면 남은 확인 2가지. 응답에 해당 사유가 있을 때만 노출한다.
- * 판정지의 긴 확인 목록 대신, 결과를 바꾸는 두 가지만 남긴다.
- */
-const CONFIRMATIONS = [
-  {
-    codes: [
-      "LOAN_ARRANGEMENT_ONLY",
-      "SELF_FUNDING_SCHEDULE_UNKNOWN",
-      "BANK_NOT_DISCLOSED",
-    ],
-    target: "시행사",
-    ask: "알선 확정 여부와 회차별 적용 금액",
-  },
-  {
-    codes: ["PERSONAL_APPROVAL_REQUIRED", "INDIVIDUAL_REVIEW_REQUIRED"],
-    target: "은행",
-    ask: "개인별 실제 실행비율과 한도",
-  },
-] as const;
-
 const STATUS_LABEL: Record<VerdictStatus, string> = {
   OK: "가능",
   GAP: "부족",
@@ -223,19 +202,7 @@ export function VerdictResult() {
   const meta = data.meta;
   const stages = data.verdicts ?? [];
   const needsCheck = data.overall_info_confidence !== "CONFIRMED";
-  const preparation = data.shortfall_preparation;
   const criticalLine = data.interim_critical_line;
-
-  // 확인 항목은 응답에 실제로 그 사유가 있을 때만 남긴다
-  const reasonCodes = new Set(
-    (data.holds ?? [])
-      .map((hold) => hold.reason_code)
-      .concat((data.risk_clauses ?? []).map((clause) => clause.code))
-      .filter((code): code is string => Boolean(code))
-  );
-  const confirmations = CONFIRMATIONS.filter((item) =>
-    item.codes.some((code) => reasonCodes.has(code))
-  );
 
   return (
     <div className={wrapper}>
@@ -355,31 +322,6 @@ export function VerdictResult() {
         </p>
       )}
 
-      {/* 결과를 확정할 마지막 확인 2가지 */}
-      {confirmations.length > 0 && (
-        <section className="flex flex-col gap-[10px]">
-          <h3 className="text-body-2 font-bold text-foreground">
-            결과를 확정하려면
-          </h3>
-          <ul className="flex flex-col gap-[8px]">
-            {confirmations.map((item) => (
-              <li
-                key={item.target}
-                className="flex gap-[8px] rounded-[6px] bg-primary-50 p-[10px] text-body-3 font-medium text-foreground"
-              >
-                <span className="shrink-0 font-bold text-primary">
-                  {item.target}
-                </span>
-                <span>{item.ask}을(를) 확인해주세요.</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-body-3 font-medium text-muted-foreground">
-            {"두 가지가 확인되면 최초 부족 시점과 부족액을 더 정확히 계산할 수 있어요."}
-          </p>
-        </section>
-      )}
-
       {/* 미래규정 시나리오 — 디자인상 준비 중 */}
       <section className="flex flex-col gap-[10px]">
         <h3 className="text-body-2 font-bold text-foreground">
@@ -387,19 +329,6 @@ export function VerdictResult() {
         </h3>
         <p className="rounded-[6px] bg-muted p-[10px] text-body-3 font-medium text-muted-foreground">
           준비 중 입니다.
-        </p>
-      </section>
-
-      {/* 대출 상환 시나리오 */}
-      <section className="flex flex-col gap-[10px]">
-        <h3 className="text-body-2 font-bold text-foreground">
-          대출 상환 시나리오
-        </h3>
-        <p className="rounded-[6px] bg-muted p-[10px] text-body-3 font-medium text-muted-foreground">
-          {preparation?.calculable && preparation.monthly_required
-            ? `월 ${formatManwon(preparation.monthly_required)} 원씩 모으면 ${preparation.months_remaining ?? "?"}개월 만에 채울 수 있어요.`
-            : (preparation?.hold_reason ??
-              "납부 일정이 확정되지 않아 계산을 보류했어요.")}
         </p>
       </section>
 
