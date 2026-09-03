@@ -42,10 +42,17 @@ export function useMatchedComplexesQuery(
   });
 }
 
+/**
+ * 공고 상세. complexId 가 비어 있으면 호출하지 않는다 — 빈 값으로 부르면
+ * /complexes/ 가 되어 상세가 아니라 목록을 긁어온다.
+ * 같은 단지를 여러 화면에서 참조하므로 캐시를 넉넉히 유지한다.
+ */
 export function useComplexDetailQuery(complexId: string) {
   return useQuery({
     queryKey: complexKeys.detail(complexId),
     queryFn: () => fetchComplexDetail(complexId),
+    enabled: Boolean(complexId),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
