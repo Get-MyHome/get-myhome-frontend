@@ -19,6 +19,8 @@ export const STAGE_LABEL: Record<VerdictStage, string> = {
 
 export interface VerdictMeta {
   rule_version: string | null;
+  /** 규칙과 함께 고정되는 가정값 묶음 (예: A-2026-08) */
+  assumption_set_id: string | null;
   /** 판정 수행 일시 (YYYY-MM-DD) */
   calculated_at: string | null;
   /** step1: 필수만 입력 / step2: 상세까지 입력 */
@@ -43,12 +45,14 @@ export interface StageVerdict {
   required: number | null;
   available: number | null;
   gap: number | null;
-  months_available: number | null;
   months_needed: number | null;
   scenarios: string[] | null;
   /** 상태 이유 한 줄 요약 (화면 표시용) */
   reason_summary: string | null;
-  due_date: string | null;
+  /** 공고문 근거 ID. 구간에 따라 비어 있다 */
+  evidence_ids?: string[];
+  /** 납부 기한. CONTRACT·BALANCE 에는 내려오지 않는다 */
+  due_date?: string | null;
 }
 
 export interface VerdictFinancingRoute {
@@ -59,27 +63,6 @@ export interface VerdictFinancingRoute {
   limit_max: number | null;
   /** DTI / LTV / DSR */
   binding_factor: string | null;
-}
-
-export interface ShortfallPreparation {
-  /** 만원. 계산 불가면 null */
-  total_shortfall: number | null;
-  shortfall_stage: VerdictStage | null;
-  months_remaining: number | null;
-  monthly_required: number | null;
-  calculable: boolean;
-  hold_reason: string | null;
-}
-
-export interface VerdictHold {
-  reason_code: string | null;
-  message: string | null;
-  next_action: string | null;
-  /** DOCUMENT_UNCERTAINTY: 공고문에서 확인 불가 / PERSONAL_*: 추가 입력 필요 */
-  kind: string | null;
-  /** true 면 해당 구간 계산을 보류한 것 */
-  blocking: boolean;
-  related_stage: VerdictStage | null;
 }
 
 export interface RiskClause {
@@ -106,6 +89,28 @@ export interface InterimCriticalLine {
   disclaimer: string | null;
 }
 
+/**
+ * 중도금 조달 구조. 사업주체 알선 범위 밖에 자납분이 있으면
+ * verdicts 의 INTERIM required 는 중도금 총액이 아니라 그 자납분이다.
+ */
+export interface InterimFinancingDetail {
+  confirmed: {
+    /** 분양가 대비 중도금 총 비율 (0~1) */
+    interim_total_ratio: number | null;
+    interim_installment_count: number | null;
+    arrangement_status: string | null;
+    arranged_ratio: number | null;
+    self_funding_required: boolean;
+    /** 알선 범위 밖 자납 비율 (0~1) */
+    self_funding_ratio: number | null;
+    interest_type: string | null;
+  } | null;
+}
+
+/**
+ * 화면에서 쓰는 필드만 옮겼다. 응답에는 이 밖에도
+ * subscription_eligibilities · route_comparisons · evidence 가 함께 온다.
+ */
 export interface VerdictResult {
   verdict_id: string;
   meta: VerdictMeta | null;
@@ -116,9 +121,8 @@ export interface VerdictResult {
   first_shortfall_gap: number | null;
   financing_routes: VerdictFinancingRoute[] | null;
   verdicts: StageVerdict[] | null;
-  shortfall_preparation: ShortfallPreparation | null;
   interim_critical_line: InterimCriticalLine | null;
-  holds: VerdictHold[] | null;
+  interim_financing_detail: InterimFinancingDetail | null;
   /** 공고문 사실 요약 (AI 분석) */
   analysis_summary: string | null;
   risk_clauses: RiskClause[] | null;
