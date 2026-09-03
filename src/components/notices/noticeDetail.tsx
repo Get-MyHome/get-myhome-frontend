@@ -18,7 +18,7 @@ export function NoticeDetail({ complexId }: { complexId: string }) {
     useComplexDetailQuery(complexId);
 
   const wrapper =
-    "flex flex-1 flex-col gap-[30px] px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+12px)]";
+    "flex flex-1 flex-col gap-[30px] px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+24px)]";
 
   if (isLoading) {
     return (

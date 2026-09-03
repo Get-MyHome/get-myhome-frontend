@@ -74,7 +74,7 @@ export function LoanRouteList() {
   }, [data?.condition_token]);
 
   const wrapper =
-    "flex flex-1 flex-col px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+12px)]";
+    "flex flex-1 flex-col px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+24px)]";
 
   if (!mounted || isLoading) {
     return (

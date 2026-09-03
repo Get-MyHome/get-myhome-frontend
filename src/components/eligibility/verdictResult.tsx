@@ -184,7 +184,7 @@ export function VerdictResult() {
   const { data: complex } = useComplexDetailQuery(complexId);
 
   const wrapper =
-    "flex flex-1 flex-col gap-[24px] px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+12px)]";
+    "flex flex-1 flex-col gap-[24px] px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+24px)]";
 
   if (!mounted || isLoading) {
     return (

@@ -44,7 +44,7 @@ export function BottomSheet({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative w-full max-w-app rounded-t-[16px] bg-surface px-gutter pt-[10px] pb-[calc(env(safe-area-inset-bottom)+16px)]"
+        className="relative w-full max-w-app rounded-t-[16px] bg-surface px-gutter pt-[10px] pb-[calc(env(safe-area-inset-bottom)+24px)]"
       >
         <div className="mx-auto h-[6px] w-[36px] rounded-full bg-neutral-300" />
         <h2 className="mt-[26px] text-subtitle-3 font-bold text-foreground">

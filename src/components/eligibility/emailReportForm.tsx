@@ -93,17 +93,23 @@ export function EmailReportForm() {
         </p>
       </div>
 
-      <button
-        type="button"
-        disabled={!submittable}
-        onClick={() => mutate(email, { onSuccess: () => setSent(true) })}
+      {/* 화면 좌우 끝까지 닿는 버튼이라, 홈 인디케이터에 물리지 않게
+          배경만 safe-area 만큼 늘리고 글자는 48px 안에 둔다 */}
+      <div
         className={cn(
-          "flex h-[48px] w-full items-center justify-center text-body-2 font-bold text-white",
+          "w-full pb-[env(safe-area-inset-bottom)]",
           submittable ? "bg-primary" : "bg-primary-400"
         )}
       >
-        {isPending ? "보내는 중" : "다음"}
-      </button>
+        <button
+          type="button"
+          disabled={!submittable}
+          onClick={() => mutate(email, { onSuccess: () => setSent(true) })}
+          className="flex h-[48px] w-full items-center justify-center text-body-2 font-bold text-white"
+        >
+          {isPending ? "보내는 중" : "다음"}
+        </button>
+      </div>
 
       {sent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
