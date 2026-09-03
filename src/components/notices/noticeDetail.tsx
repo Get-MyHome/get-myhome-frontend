@@ -7,6 +7,7 @@ import CalendarIcon from "@/assets/icons/calendar.svg";
 import LocationPointIcon from "@/assets/icons/locationPoint.svg";
 import { UnitTypeSelector } from "@/components/notices/unitTypeSelector";
 import { ErrorState } from "@/components/ui/errorState";
+import { LoadingState } from "@/components/ui/loadingState";
 import { E012_NOTICE_LOAD_FAILED, NOTICE_NOT_FOUND } from "@/constants/errors";
 import { getHttpStatus } from "@/lib/httpClient";
 import { useComplexDetailQuery } from "@/queries/complexes";
@@ -23,9 +24,7 @@ export function NoticeDetail({ complexId }: { complexId: string }) {
   if (isLoading) {
     return (
       <div className={wrapper}>
-        <p className="py-[24px] text-body-2 font-medium text-muted-foreground">
-          불러오는 중이에요
-        </p>
+        <LoadingState message="공고를 불러오는 중이에요" />
       </div>
     );
   }

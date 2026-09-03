@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/ui/errorState";
+import { LoadingState } from "@/components/ui/loadingState";
 import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
 import {
   CONDITIONS_STORAGE_KEY,
@@ -166,9 +167,7 @@ export function SubscriptionSection({
       )}
 
       {(isLoading || tokenPending) && (
-        <p className="px-gutter py-[24px] text-body-2 font-medium text-muted-foreground">
-          불러오는 중이에요
-        </p>
+        <LoadingState message="공고를 불러오는 중이에요" />
       )}
 
       {isError && (

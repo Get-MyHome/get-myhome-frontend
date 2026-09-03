@@ -11,6 +11,7 @@ import StageHoldIcon from "@/assets/icons/stageHold.svg";
 import StageOkIcon from "@/assets/icons/stageOk.svg";
 import { TermsAgreementSheet } from "@/components/eligibility/termsAgreementSheet";
 import { ErrorState } from "@/components/ui/errorState";
+import { LoadingState } from "@/components/ui/loadingState";
 import {
   CONDITIONS_STORAGE_KEY,
   FINANCING_TOKEN_STORAGE_KEY,
@@ -168,9 +169,10 @@ export function VerdictResult() {
   if (!mounted || isLoading) {
     return (
       <div className={wrapper}>
-        <p className="py-[24px] text-body-2 font-medium text-muted-foreground">
-          판정하는 중이에요
-        </p>
+        <LoadingState
+          message="판정하는 중이에요"
+          hint={"처음 보는 공고는 공고문을 분석하느라\n시간이 조금 걸릴 수 있어요."}
+        />
       </div>
     );
   }
