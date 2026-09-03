@@ -3,3 +3,6 @@ export const CONDITIONS_STORAGE_KEY = "eligibility-conditions";
 
 /** 대출 자격 조회로 받은 조건 토큰 (30분 유효). 공고 매칭 호출에 재사용 */
 export const FINANCING_TOKEN_STORAGE_KEY = "financing-condition-token";
+
+/** 스플래시 노출 여부. 세션당 첫 진입에만 보여주려고 끝난 시점에 기록한다 */
+export const SPLASH_SEEN_STORAGE_KEY = "splash-seen";

@@ -6,14 +6,20 @@ import { formatDotDate, formatEok } from "@/utils/format";
 
 import { SupplyTypeBadge } from "./supplyTypeBadge";
 
-/** 청약 공고 카드. 누르면 평형 선택 화면으로 넘어간다 */
+/**
+ * 청약 공고 카드. 누른 뒤 어디로 갈지는 목록마다 달라서 부모가 정한다.
+ * (매칭 목록 → 평형 선택 / 공고 탭 → 판정 흐름 시작)
+ */
 export function SubscriptionCard({
   subscription,
+  href,
+  onSelect,
 }: {
   subscription: HousingSubscription;
+  href: string;
+  onSelect?: () => void;
 }) {
   const {
-    id,
     supplyType,
     supplyTypeLabel,
     deadline,
@@ -25,7 +31,8 @@ export function SubscriptionCard({
 
   return (
     <Link
-      href={`/eligibility/notices/${id}`}
+      href={href}
+      onClick={onSelect}
       className="flex items-center justify-between rounded-[6px] bg-muted p-[12px]"
     >
       <div className="flex min-w-0 flex-col gap-[6px]">

@@ -4,7 +4,10 @@ import { useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/ui/errorState";
 import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
-import { FINANCING_TOKEN_STORAGE_KEY } from "@/constants/storage";
+import {
+  CONDITIONS_STORAGE_KEY,
+  FINANCING_TOKEN_STORAGE_KEY,
+} from "@/constants/storage";
 import {
   useComplexesQuery,
   useMatchedComplexesQuery,
@@ -17,7 +20,11 @@ import type {
 import type { HousingSubscription, SupplyType } from "@/types/subscription";
 import { cn } from "@/utils/cn";
 import { formatDotDate } from "@/utils/format";
-import { useIsMounted, useSessionRaw } from "@/utils/sessionState";
+import {
+  clearSessionState,
+  useIsMounted,
+  useSessionRaw,
+} from "@/utils/sessionState";
 
 import { SubscriptionCard } from "./subscriptionCard";
 import { SubscriptionFilterBar } from "./subscriptionFilterBar";
@@ -174,7 +181,21 @@ export function SubscriptionSection({
           <ul className="flex flex-col gap-[14px]">
             {data.items.map((complex) => (
               <li key={complex.complex_id}>
-                <SubscriptionCard subscription={mapComplexToSubscription(complex)} />
+                <SubscriptionCard
+                  subscription={mapComplexToSubscription(complex)}
+                  href={
+                    matched
+                      ? `/eligibility/notices/${complex.complex_id}`
+                      : "/eligibility"
+                  }
+                  // 공고 탭은 조건 없이 둘러보는 경로다. 홈의 [가능성 판정하기]와
+                  // 똑같이 이전 입력을 비우고 판정 흐름을 처음부터 시작한다
+                  onSelect={
+                    matched
+                      ? undefined
+                      : () => clearSessionState(CONDITIONS_STORAGE_KEY)
+                  }
+                />
               </li>
             ))}
           </ul>
