@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import BuildingIcon from "@/assets/icons/building.svg";
-import ChevronRightIcon from "@/assets/icons/chevronRight.svg";
 import ErrorSmallIcon from "@/assets/icons/errorSmall.svg";
 import LocationPointIcon from "@/assets/icons/locationPoint.svg";
 import StageBlockIcon from "@/assets/icons/stageBlock.svg";
@@ -383,14 +382,6 @@ export function VerdictResult() {
                 </li>
               ))}
             </ul>
-            <button
-              type="button"
-              onClick={() => router.push("/eligibility/loans/detail")}
-              className="flex items-center self-start text-caption-2 font-medium text-info"
-            >
-              조건 추가 입력하기
-              <ChevronRightIcon aria-hidden="true" className="size-[18px] shrink-0" />
-            </button>
           </div>
         </section>
       )}

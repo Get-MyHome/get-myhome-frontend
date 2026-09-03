@@ -18,7 +18,7 @@ function chunk<T>(items: T[], size: number): T[][] {
 }
 
 /**
- * 지역별 진행중인 청약 개수. 3개씩 페이지로 스와이프(scroll-snap) + 하단 도트.
+ * 지역별 제공 중인 청약 개수. 3개씩 페이지로 스와이프(scroll-snap) + 하단 도트.
  * 지역별 집계 API 가 없어 지역마다 개별 조회한다 — 집계 엔드포인트가 생기면 교체.
  */
 export function RegionCountSwiper() {
@@ -31,7 +31,7 @@ export function RegionCountSwiper() {
     <section className="flex flex-col gap-[14px]">
       <div className="flex items-center justify-between">
         <h2 className="text-body-2 font-bold text-foreground">
-          지역별 진행중인 청약
+          지역별 제공 중인 청약
         </h2>
         {updatedAt && (
           <p className="text-body-3 font-medium text-neutral-300">
