@@ -9,7 +9,13 @@ export interface UnitType {
   price: number;
 }
 
-/** 진행중인 청약 공고 한 건 */
+/**
+ * 제공 중인 청약 공고 한 건.
+ *
+ * "제공 중" 은 접수가 진행 중인 공고와, 가장 최근에 마감된 공고를 기준으로
+ * 그 이전 30일 안에 마감된 공고까지를 말한다. 마감된 공고도 목록에 섞이므로
+ * 접수 마감일이 과거 날짜일 수 있다. 어느 공고를 내릴지는 백엔드가 가린다.
+ */
 export interface HousingSubscription {
   id: string;
   supplyType: SupplyType;
@@ -17,6 +23,8 @@ export interface HousingSubscription {
   supplyTypeLabel?: string;
   /** 접수 마감일. ISO 날짜(YYYY-MM-DD) */
   deadline: string;
+  /** 접수가 끝난 공고. 마감일 표기가 "까지" 에서 "마감" 으로 바뀐다 */
+  closed: boolean;
   /** 단지명 */
   name: string;
   address: string;

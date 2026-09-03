@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import ChevronRightIcon from "@/assets/icons/chevronRight.svg";
+import { Badge } from "@/components/ui/badge";
 import type { HousingSubscription } from "@/types/subscription";
 import { formatDotDate, formatEok } from "@/utils/format";
 
@@ -23,6 +24,7 @@ export function SubscriptionCard({
     supplyType,
     supplyTypeLabel,
     deadline,
+    closed,
     name,
     address,
     price,
@@ -33,13 +35,16 @@ export function SubscriptionCard({
     <Link
       href={href}
       onClick={onSelect}
-      className="flex items-center justify-between rounded-[6px] bg-muted p-[12px]"
+      className="relative flex items-center justify-between rounded-[6px] bg-muted p-[12px]"
     >
       <div className="flex min-w-0 flex-col gap-[6px]">
         <div className="flex items-end gap-[6px]">
           <SupplyTypeBadge supplyType={supplyType} label={supplyTypeLabel} />
+          {closed && <Badge className="bg-muted-foreground">마감</Badge>}
           <span className="text-body-3 font-medium text-muted-foreground">
-            {formatDotDate(deadline)} 까지
+            {/* 마감 공고도 목록에 섞인다. "까지" 로 두면 아직 넣을 수 있어 보인다 */}
+            {formatDotDate(deadline)}
+            {closed ? " 마감" : " 까지"}
           </span>
         </div>
 

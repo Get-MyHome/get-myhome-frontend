@@ -63,15 +63,9 @@ export interface RegionCount {
   isLoading: boolean;
 }
 
-/** 청약 공고는 하루 단위로만 바뀐다. 백엔드도 1일 캐시라 더 자주 물어도 같은 값이다 */
-const ONE_DAY = 24 * 60 * 60 * 1000;
-
 /**
- * 지역별 진행중인 청약 개수 + 데이터 갱신일. 집계 API 가 없어 지역마다 size=1 로
+ * 지역별 제공 중인 청약 개수 + 데이터 갱신일. 집계 API 가 없어 지역마다 size=1 로
  * total 만 읽는다. (지역 필터만 — houseCategory 는 걸지 않음)
- *
- * 지역 수만큼 요청이 나가므로 하루 한 번만 받는다. gcTime 을 함께 늘리지 않으면
- * 홈을 벗어난 사이 캐시가 수거돼 다시 들어올 때 17번을 새로 부른다.
  */
 export function useRegionCountsQuery(): {
   counts: RegionCount[];
@@ -81,8 +75,7 @@ export function useRegionCountsQuery(): {
     queries: COMPLEX_REGIONS.map((region) => ({
       queryKey: ["complexes", "region-count", region] as const,
       queryFn: () => fetchComplexes({ region, page: 1, size: 1 }),
-      staleTime: ONE_DAY,
-      gcTime: ONE_DAY,
+      staleTime: 5 * 60 * 1000,
     })),
   });
 

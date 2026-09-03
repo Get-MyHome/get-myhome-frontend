@@ -46,6 +46,7 @@ function mapComplexToSubscription(complex: ComplexSummary): HousingSubscription 
     supplyType,
     supplyTypeLabel: supplyType === "other" ? complex.house_type : undefined,
     deadline: complex.application_end_date,
+    closed: complex.status === "CLOSED",
     name: complex.name,
     address: complex.address,
     // sale_price 는 만원 단위. 미등록 공고는 null (목록 절반가량)
@@ -60,7 +61,7 @@ function mapComplexToSubscription(complex: ComplexSummary): HousingSubscription 
 const PAGE_SIZE = 20;
 
 /**
- * 진행중인 청약 목록. 공고 탭과 판정 흐름(조건 입력 후)에서 같은 화면으로 쓴다.
+ * 제공 중인 청약 목록. 공고 탭과 판정 흐름(조건 입력 후)에서 같은 화면으로 쓴다.
  * headerOffset 은 스티키 필터 헤더가 붙는 위치 — 판정 흐름은 위에 AppBar 가 있어 그만큼 내린다.
  */
 export function SubscriptionSection({
@@ -144,7 +145,7 @@ export function SubscriptionSection({
       >
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-[6px] text-body-2 font-medium text-foreground">
-            진행중인 청약
+            제공 중인 청약
             <span>{data?.total ?? 0}개</span>
           </h2>
           {data && (
@@ -179,7 +180,14 @@ export function SubscriptionSection({
       )}
 
       {data && data.items.length === 0 && (
-        <ErrorState message="현재 진행중인 청약 공고가 없습니다." />
+        <ErrorState
+          message={
+            // 공고 탭은 조건과 무관한 목록이라 "조건에 맞는" 이라고 하면 안 된다
+            matched
+              ? "조건에 맞는 청약 공고가 없습니다."
+              : "현재 제공 중인 청약 공고가 없습니다."
+          }
+        />
       )}
 
       {data && data.items.length > 0 && (

@@ -19,6 +19,11 @@ export interface ComplexSummary {
   /** 대표 분양가 (첫 주택형 기준, 만원). 주택형 미등록이면 null */
   sale_price: number | null;
   is_judgeable: boolean;
+  /**
+   * 공고 상태. OPEN: 접수 진행 중 / CLOSED: 접수 마감.
+   * 서버 배포 전에는 내려오지 않아, 없으면 진행 중으로 본다
+   */
+  status?: "OPEN" | "CLOSED";
   /** POST /complexes/matched 응답에서만 — 이 공고를 감당할 수 있는 대출 상품명 */
   matched_product_names?: string[];
 }
