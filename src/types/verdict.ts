@@ -44,8 +44,9 @@ export interface StageVerdict {
   /** 만원 */
   required: number | null;
   available: number | null;
-  gap: number | null;
-  months_needed: number | null;
+  /** 부족이 없으면 키 자체가 내려오지 않는다 (null 이 아니라 undefined) */
+  gap?: number | null;
+  months_needed?: number | null;
   scenarios: string[] | null;
   /** 상태 이유 한 줄 요약 (화면 표시용) */
   reason_summary: string | null;

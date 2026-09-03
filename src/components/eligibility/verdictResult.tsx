@@ -76,8 +76,11 @@ function StageRow({
   last: boolean;
 }) {
   const note = stage.reason_summary;
-  const amount = stage.required === null ? null : formatManwon(stage.required);
-  const gap = stage.gap === null ? null : formatManwon(stage.gap);
+  // 부족이 없는 구간은 gap 키가 아예 없다. === null 로만 거르면 undefined 가
+  // 그대로 포맷 함수로 넘어가 NaN 이 찍힌다
+  const amount =
+    typeof stage.required === "number" ? formatManwon(stage.required) : null;
+  const gap = typeof stage.gap === "number" ? formatManwon(stage.gap) : null;
 
   return (
     <li className="flex flex-col gap-[4px]">
@@ -275,7 +278,8 @@ export function VerdictResult() {
         <p className="text-body-3 font-medium text-muted-foreground">
           입주까지 자금 완주
         </p>
-        {data.first_shortfall_stage && data.first_shortfall_gap !== null ? (
+        {data.first_shortfall_stage &&
+        typeof data.first_shortfall_gap === "number" ? (
           <p className="text-subtitle-2 font-bold text-foreground">
             {STAGE_LABEL[data.first_shortfall_stage]}에서{" "}
             <span className="text-danger">
