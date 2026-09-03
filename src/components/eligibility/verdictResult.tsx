@@ -66,7 +66,15 @@ function StageIcon({ status }: { status: VerdictStatus }) {
 }
 
 /** 구간 한 줄 + 아래로 이어지는 세로선. 마지막 구간은 선을 그리지 않는다 */
-function StageRow({ stage, last }: { stage: StageVerdict; last: boolean }) {
+function StageRow({
+  stage,
+  label,
+  last,
+}: {
+  stage: StageVerdict;
+  label: string;
+  last: boolean;
+}) {
   const note = stage.reason_summary;
   const amount = stage.required === null ? null : formatManwon(stage.required);
   const gap = stage.gap === null ? null : formatManwon(stage.gap);
@@ -77,7 +85,7 @@ function StageRow({ stage, last }: { stage: StageVerdict; last: boolean }) {
         <span className="flex min-w-0 items-center gap-[6px]">
           <StageIcon status={stage.status} />
           <span className="text-body-2 font-bold text-foreground">
-            {STAGE_LABEL[stage.stage]}
+            {label}
           </span>
           {amount && (
             <span className="text-body-2 font-medium text-supply-private">
@@ -88,9 +96,13 @@ function StageRow({ stage, last }: { stage: StageVerdict; last: boolean }) {
         <span className="flex shrink-0 items-center gap-[8px] text-body-2 font-medium">
           {gap && <span className="text-danger">{gap} 부족</span>}
           <span
-            className={
-              stage.status === "OK" ? "text-success" : "text-danger"
-            }
+            className={cn(
+              stage.status === "OK" && "text-success",
+              // 확인필요는 오류가 아니라 정보가 모자란 상태다
+              stage.status === "HOLD" && "text-warning",
+              (stage.status === "GAP" || stage.status === "BLOCK") &&
+                "text-danger"
+            )}
           >
             {STATUS_LABEL[stage.status]}
           </span>
@@ -206,6 +218,21 @@ export function VerdictResult() {
   const needsCheck = data.overall_info_confidence !== "CONFIRMED";
   const criticalLine = data.interim_critical_line;
 
+  // 사람이 공고문을 검수(REVIEWED)한 공고만 백엔드가 구간 계산을 내려준다.
+  // 검수 전(AUTO_EXTRACTED)에는 verdicts 가 빈 배열로 온다
+  const selectedComplex = Boolean(meta?.complex_id);
+  const awaitingReview =
+    selectedComplex && meta?.analysis_review_status !== "REVIEWED";
+
+  // 알선 범위 밖 자납분이 있으면 INTERIM required 는 중도금 총액이 아니다.
+  // 그냥 "중도금" 으로 두면 아래 임계선의 "최소 필요 60%" 와 어긋나 보인다
+  const interimSelfFunded =
+    data.interim_financing_detail?.confirmed?.self_funding_required === true;
+  const stageLabel = (stage: StageVerdict["stage"]) =>
+    stage === "INTERIM" && interimSelfFunded
+      ? "중도금 자납분"
+      : STAGE_LABEL[stage];
+
   return (
     <div className={wrapper}>
       {/* 공고 요약 */}
@@ -260,7 +287,9 @@ export function VerdictResult() {
           <p className="text-subtitle-2 font-bold text-foreground">
             {data.overall_fund_status === "OK"
               ? "지금 조건으로 완주할 수 있어요"
-              : "부족 구간을 계산하지 못했어요"}
+              : awaitingReview
+                ? "공고문 검수가 끝나면 판정할 수 있어요"
+                : "부족 구간을 계산하지 못했어요"}
           </p>
         )}
       </div>
@@ -277,13 +306,16 @@ export function VerdictResult() {
               <StageRow
                 key={stage.stage}
                 stage={stage}
+                label={stageLabel(stage.stage)}
                 last={index === stages.length - 1}
               />
             ))}
           </ul>
         ) : (
           <p className="rounded-[6px] bg-muted p-[10px] text-body-3 font-medium text-muted-foreground">
-            단지를 선택하지 않아 구간별 판정을 계산하지 못했어요.
+            {awaitingReview
+              ? "이 공고는 공고문 분석 검수가 끝나지 않아 구간별 판정을 아직 계산할 수 없어요."
+              : "단지를 선택하지 않아 구간별 판정을 계산하지 못했어요."}
           </p>
         )}
       </section>
