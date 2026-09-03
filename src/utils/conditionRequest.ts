@@ -32,15 +32,11 @@ function toYearMonth(value: string): string | undefined {
     : undefined;
 }
 
-/** 가입기간(개월) → 가입일 YYYY-MM-01. 오늘로부터 N개월 전 달의 1일 */
-function monthsAgoToDate(months: string): string | undefined {
-  const n = num(months);
-  if (n == null) return undefined;
-  const d = new Date();
-  d.setMonth(d.getMonth() - n);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  return `${y}-${m}-01`;
+/** YYYYMMDD 8자리 → YYYY-MM-DD. 자리수가 안 맞으면 undefined */
+function toIsoDate(value: string): string | undefined {
+  return value.length === 8
+    ? `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}`
+    : undefined;
 }
 
 function num(value: string | undefined): number | undefined {
@@ -68,10 +64,14 @@ export function toUserConditionRequest(
 
   const account = c.hasSubscriptionAccount
     ? {
-        opened_at: monthsAgoToDate(c.subscriptionAccountMonths),
+        opened_at: toIsoDate(c.subscriptionAccountOpenedDate),
         deposit_count: num(c.subscriptionAccountDepositCount),
       }
     : undefined;
+
+  // 정책대출 상세 확인을 고르지 않으면 그 요건 값들은 보내지 않는다.
+  // 골랐다가 되돌린 경우 남아 있는 값이 판정에 섞이지 않게 하려는 것.
+  const policy = c.checkPolicyLoan;
 
   return {
     annual_income: Number(c.annualIncome),
@@ -88,20 +88,25 @@ export function toUserConditionRequest(
           : (undefined as IncomeType | undefined),
     monthly_saving: num(c.monthlySaving),
     spouse_income: num(c.spouseIncome),
-    marriage_planned_date: toYearMonth(c.marriagePlannedMonth),
+    // 결혼예정일은 "결혼예정" 일 때만 의미가 있다 (기혼은 이미 혼인 상태)
+    marriage_planned_date:
+      c.maritalStatus === "결혼예정"
+        ? toYearMonth(c.marriagePlannedMonth)
+        : undefined,
     existing_loan_monthly_payment: c.hasExistingLoan
       ? num(c.existingLoanMonthlyPayment)
       : undefined,
     existing_loan_balance: c.hasExistingLoan
       ? num(c.existingLoanBalance)
       : undefined,
-    household_type: c.householdRole
-      ? HOUSEHOLD_TYPE_MAP[c.householdRole]
-      : undefined,
-    all_members_homeless: c.allMembersHomeless || undefined,
-    net_asset: num(c.netWorth),
+    household_type:
+      policy && c.householdRole
+        ? HOUSEHOLD_TYPE_MAP[c.householdRole]
+        : undefined,
+    all_members_homeless: (policy && c.allMembersHomeless) || undefined,
+    net_asset: policy ? num(c.netWorth) : undefined,
     has_subscription_right: c.hasSubscriptionRight || undefined,
-    first_time_buyer: c.firstTimeBuyer || undefined,
+    first_time_buyer: (policy && c.firstTimeBuyer) || undefined,
     subscription_account: account,
   };
 }

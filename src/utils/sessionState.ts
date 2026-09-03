@@ -61,3 +61,13 @@ export function useSessionRaw(key: string): string | null {
     () => null
   );
 }
+
+/** useSessionRaw 로 읽은 원문을 파싱한다. 없거나 깨졌으면 null */
+export function parseSessionRaw<T>(raw: string | null): T | null {
+  if (raw === null) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}

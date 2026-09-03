@@ -43,7 +43,7 @@ export function ConditionForm() {
 
   return (
     <form
-      className="flex flex-1 flex-col px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+12px)]"
+      className="flex flex-1 flex-col gap-[20px] px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+24px)]"
       onSubmit={(event) => {
         event.preventDefault();
         router.push("/eligibility/loans");

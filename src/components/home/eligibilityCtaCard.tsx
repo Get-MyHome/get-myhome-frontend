@@ -7,7 +7,7 @@ import heroIllustration from "@/assets/images/eligibilityHero.png";
 /** 소득·자산 입력으로 청약 감당 가능성을 판정하는 플로우의 진입 카드. */
 export function EligibilityCtaCard() {
   return (
-    <section className="flex flex-col gap-[8px] rounded-[10px] bg-primary-subtle p-[20px]">
+    <section className="flex flex-col gap-[8px] rounded-[10px] bg-linear-to-b from-surface-gradient-from to-surface-gradient-to p-[20px]">
       <Image
         src={heroIllustration}
         alt=""

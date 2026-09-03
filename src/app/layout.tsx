@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 
 import { Splash } from "@/components/layout/splash";
 import { SERVICE_TAGLINE } from "@/constants/service";
+import { SPLASH_SEEN_STORAGE_KEY } from "@/constants/storage";
 
 import { Providers } from "./providers";
 
@@ -42,6 +43,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className={`${geistMono.variable} antialiased`}>
       <body className="bg-white">
+        {/* 스플래시는 세션당 첫 진입에만 띄운다. 판정을 리액트에 맡기면 서버가
+            그린 HTML 이 하이드레이션 전에 이미 떠서 새로고침 때 깜빡인다.
+            그래서 스플래시 마크업보다 먼저 실행되는 이 스크립트가 판정한다.
+            노출 도중 새로고침해도 다시 뜨지 않도록 기록은 즉시 남긴다. */}
+        <style>{`html[data-splash-seen] #splash{display:none!important}`}</style>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              `try{var k=${JSON.stringify(SPLASH_SEEN_STORAGE_KEY)};` +
+              `if(sessionStorage.getItem(k)){` +
+              `document.documentElement.setAttribute('data-splash-seen','')}` +
+              `else{sessionStorage.setItem(k,'1')}}catch(e){}`,
+          }}
+        />
         <div className="mx-auto flex min-h-dvh w-full max-w-app flex-col bg-background">
           <Providers>{children}</Providers>
         </div>

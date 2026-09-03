@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import InfoCircleIcon from "@/assets/icons/infoCircle.svg";
 import MoneyStackIcon from "@/assets/icons/moneyStack.svg";
 import { ErrorState } from "@/components/ui/errorState";
+import { LoadingState } from "@/components/ui/loadingState";
 import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
 import { LOAN_PRODUCT_DESCRIPTION } from "@/constants/loanProducts";
 import {
@@ -74,14 +75,12 @@ export function LoanRouteList() {
   }, [data?.condition_token]);
 
   const wrapper =
-    "flex flex-1 flex-col px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+12px)]";
+    "flex flex-1 flex-col px-gutter pt-[26px] pb-[calc(env(safe-area-inset-bottom)+24px)]";
 
   if (!mounted || isLoading) {
     return (
       <div className={wrapper}>
-        <p className="py-[24px] text-body-2 font-medium text-muted-foreground">
-          불러오는 중이에요
-        </p>
+        <LoadingState message="가능한 대출을 계산하는 중이에요" />
       </div>
     );
   }

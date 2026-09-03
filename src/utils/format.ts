@@ -18,3 +18,21 @@ export function formatEok(won: number): string {
 export function formatManwonToEok(manwon: number): string {
   return formatEok(manwon * 10_000);
 }
+
+/**
+ * 만원 단위 금액을 "1억 2,595만" 형태로 바꾼다.
+ * 억 미만이면 "4,200만", 억 단위가 딱 떨어지면 "2억".
+ */
+export function formatManwon(manwon: number): string {
+  const eok = Math.floor(manwon / 10_000);
+  const rest = manwon % 10_000;
+  if (eok === 0) return `${rest.toLocaleString()}만`;
+  if (rest === 0) return `${eok}억`;
+  return `${eok}억 ${rest.toLocaleString()}만`;
+}
+
+/** 0~1 비율을 "51.6%" 로. 소수점이 필요 없으면 생략한다 */
+export function formatRatio(ratio: number): string {
+  const percent = ratio * 100;
+  return `${Number(percent.toFixed(1))}%`;
+}

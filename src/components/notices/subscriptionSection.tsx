@@ -3,8 +3,12 @@
 import { useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/ui/errorState";
+import { LoadingState } from "@/components/ui/loadingState";
 import { E012_NOTICE_LOAD_FAILED } from "@/constants/errors";
-import { FINANCING_TOKEN_STORAGE_KEY } from "@/constants/storage";
+import {
+  CONDITIONS_STORAGE_KEY,
+  FINANCING_TOKEN_STORAGE_KEY,
+} from "@/constants/storage";
 import {
   useComplexesQuery,
   useMatchedComplexesQuery,
@@ -14,10 +18,17 @@ import type {
   ComplexSummary,
   HouseCategory,
 } from "@/types/complex";
+import type { EligibilityConditions } from "@/types/eligibility";
 import type { HousingSubscription, SupplyType } from "@/types/subscription";
 import { cn } from "@/utils/cn";
+import { toUserConditionRequest } from "@/utils/conditionRequest";
 import { formatDotDate } from "@/utils/format";
-import { useIsMounted, useSessionRaw } from "@/utils/sessionState";
+import {
+  clearSessionState,
+  parseSessionRaw,
+  useIsMounted,
+  useSessionRaw,
+} from "@/utils/sessionState";
 
 import { SubscriptionCard } from "./subscriptionCard";
 import { SubscriptionFilterBar } from "./subscriptionFilterBar";
@@ -71,14 +82,17 @@ export function SubscriptionSection({
   // 매칭 모드에서만 필요. 마운트 후 sessionStorage 에서 읽는다.
   const mounted = useIsMounted();
   const rawToken = useSessionRaw(FINANCING_TOKEN_STORAGE_KEY);
-  const conditionToken = useMemo(() => {
-    if (!matched || rawToken === null) return null;
-    try {
-      return JSON.parse(rawToken) as string;
-    } catch {
-      return null;
-    }
-  }, [matched, rawToken]);
+  const conditionToken = useMemo(
+    () => (matched ? parseSessionRaw<string>(rawToken) : null),
+    [matched, rawToken]
+  );
+  // 토큰은 30분이면 만료된다. 같은 조건으로 계속 조회되도록 user 도 함께 보낸다
+  const rawConditions = useSessionRaw(CONDITIONS_STORAGE_KEY);
+  const user = useMemo(() => {
+    if (!matched) return undefined;
+    const conditions = parseSessionRaw<EligibilityConditions>(rawConditions);
+    return (conditions ? toUserConditionRequest(conditions) : null) ?? undefined;
+  }, [matched, rawConditions]);
   const tokenPending = matched && !mounted;
 
   const allQuery = useComplexesQuery(
@@ -88,12 +102,13 @@ export function SubscriptionSection({
   const matchedQuery = useMatchedComplexesQuery(
     {
       conditionToken: conditionToken ?? "",
+      user,
       region,
       houseCategory,
       page,
       size: PAGE_SIZE,
     },
-    { enabled: matched && mounted && Boolean(conditionToken) }
+    { enabled: matched && mounted && Boolean(conditionToken || user) }
   );
   const { data, isLoading, isError, refetch } = matched ? matchedQuery : allQuery;
 
@@ -147,14 +162,12 @@ export function SubscriptionSection({
         />
       </div>
 
-      {matched && mounted && conditionToken === null && (
+      {matched && mounted && conditionToken === null && !user && (
         <ErrorState message="대출 자격 조회를 먼저 진행해주세요." />
       )}
 
       {(isLoading || tokenPending) && (
-        <p className="px-gutter py-[24px] text-body-2 font-medium text-muted-foreground">
-          불러오는 중이에요
-        </p>
+        <LoadingState message="공고를 불러오는 중이에요" />
       )}
 
       {isError && (
@@ -174,7 +187,21 @@ export function SubscriptionSection({
           <ul className="flex flex-col gap-[14px]">
             {data.items.map((complex) => (
               <li key={complex.complex_id}>
-                <SubscriptionCard subscription={mapComplexToSubscription(complex)} />
+                <SubscriptionCard
+                  subscription={mapComplexToSubscription(complex)}
+                  href={
+                    matched
+                      ? `/eligibility/notices/${complex.complex_id}`
+                      : "/eligibility"
+                  }
+                  // 공고 탭은 조건 없이 둘러보는 경로다. 홈의 [가능성 판정하기]와
+                  // 똑같이 이전 입력을 비우고 판정 흐름을 처음부터 시작한다
+                  onSelect={
+                    matched
+                      ? undefined
+                      : () => clearSessionState(CONDITIONS_STORAGE_KEY)
+                  }
+                />
               </li>
             ))}
           </ul>
