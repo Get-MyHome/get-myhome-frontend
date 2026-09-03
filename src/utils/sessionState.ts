@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /**
  * 화면을 벗어났다 돌아와도 입력값이 남아 있도록 sessionStorage 에 임시 보관한다.
@@ -70,4 +70,34 @@ export function parseSessionRaw<T>(raw: string | null): T | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * 이 화면에서 고친 값을 "확정" 하지 않고 떠나면 들어올 때의 값으로 되돌린다.
+ * 뒤로가기의 의미를 "이 화면에서 쓴 것을 취소한다" 로 다루기 위한 장치다.
+ *
+ * 앱바 버튼에만 걸면 스와이프·브라우저 뒤로가기·하드웨어 버튼을 놓친다.
+ * 화면이 사라지는 시점(언마운트)에 처리하면 이동 수단과 무관하게 한 곳에서
+ * 처리된다. 다음 단계로 넘어갈 때는 commit() 을 불러 되돌리지 않게 한다.
+ *
+ * 새로고침처럼 정리 단계가 실행되지 않는 경우에는 값이 남는다.
+ */
+export function useDiscardOnLeave<T>(key: string): { commit: () => void } {
+  // 이 화면에 들어온 시점의 값. 마운트할 때 한 번만 읽는다
+  const [snapshot] = useState(() => readSessionState<T>(key));
+  const committed = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (committed.current) return;
+      if (snapshot === null) clearSessionState(key);
+      else writeSessionState(key, snapshot);
+    };
+  }, [key, snapshot]);
+
+  const commit = useCallback(() => {
+    committed.current = true;
+  }, []);
+
+  return { commit };
 }
