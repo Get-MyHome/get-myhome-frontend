@@ -92,9 +92,19 @@ function RegionChip({ item }: { item: RegionCount }) {
       <span className="text-caption-2 font-medium text-neutral-500">
         {item.region}
       </span>
-      <span className="text-caption-2 font-bold text-neutral-500">
-        {item.count === null ? "—" : `${item.count}개`}
-      </span>
+      {item.isLoading ? (
+        // 값이 없는 것(0개)과 아직 못 받은 것을 구분해준다. 높이를 caption-2 줄높이
+        // (16px)에 맞춰 숫자가 들어와도 칩이 흔들리지 않는다
+        <span
+          role="status"
+          aria-label={`${item.region} 청약 건수 불러오는 중`}
+          className="h-[16px] w-[26px] animate-pulse rounded-[3px] bg-border"
+        />
+      ) : (
+        <span className="text-caption-2 font-bold text-neutral-500">
+          {item.count === null ? "—" : `${item.count}개`}
+        </span>
+      )}
     </div>
   );
 }
