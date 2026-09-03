@@ -8,6 +8,7 @@ import { SelectField } from "@/components/ui/selectField";
 import { TextField } from "@/components/ui/textField";
 import {
   MARITAL_STATUSES,
+  needsMarriagePlannedDate,
   needsSpouseIncome,
   type EligibilityConditions,
   type HomeOwnership,
@@ -93,8 +94,12 @@ export function RequiredConditionFields({
         options={MARITAL_STATUSES}
         onChange={(value) => {
           onChange("maritalStatus", value);
-          // 미혼으로 바꾸면 배우자 연소득 입력값을 비운다
-          if (value === "미혼") onChange("spouseIncome", "");
+          // 더 이상 물어보지 않는 항목의 값은 남기지 않는다.
+          // (결혼 예정일은 2단계에서 받지만 노출 조건이 이 값에 걸려 있다)
+          if (!needsSpouseIncome(value)) onChange("spouseIncome", "");
+          if (!needsMarriagePlannedDate(value)) {
+            onChange("marriagePlannedMonth", "");
+          }
         }}
       />
 

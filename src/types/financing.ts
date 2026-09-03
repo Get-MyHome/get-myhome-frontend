@@ -29,6 +29,7 @@ export interface UserConditionRequest {
   has_subscription_right?: boolean;
   first_time_buyer?: boolean;
   subscription_account?: {
+    /** 통장 종류. 유효값 목록이 스펙에 없어 받지 않기로 했다 (미전송) */
     type?: string;
     /** YYYY-MM-DD */
     opened_at?: string;

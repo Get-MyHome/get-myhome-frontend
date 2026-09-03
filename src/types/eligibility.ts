@@ -10,16 +10,6 @@ export type HouseholdRole = (typeof HOUSEHOLD_ROLES)[number];
 export const INCOME_TYPES = ["근로", "사업"] as const;
 export type IncomeTypeLabel = (typeof INCOME_TYPES)[number];
 
-/** 청약통장 종류 */
-export const SUBSCRIPTION_ACCOUNT_TYPES = [
-  "주택청약종합저축",
-  "청약저축",
-  "청년주택드림",
-  "없음",
-] as const;
-export type SubscriptionAccountType =
-  (typeof SUBSCRIPTION_ACCOUNT_TYPES)[number];
-
 /** 주택 보유 여부 */
 export type HomeOwnership = "none" | "owned";
 
@@ -42,7 +32,7 @@ export interface EligibilityConditions {
   monthlySaving: string;
   /** 배우자·예비배우자 연소득 (만원) */
   spouseIncome: string;
-  /** 결혼 예정일 6자리 (YYYYMM) */
+  /** 결혼 예정일 6자리 (YYYYMM). API 스펙이 YYYY-MM 이라 연월까지만 받는다 */
   marriagePlannedMonth: string;
   /** 기존 대출 월 상환액 (만원) */
   existingLoanMonthlyPayment: string;
@@ -61,11 +51,8 @@ export interface EligibilityConditions {
   firstTimeBuyer: boolean;
   /** 청약통장 보유 여부 */
   hasSubscriptionAccount: boolean;
-  subscriptionAccountType: SubscriptionAccountType | null;
-  /** 청약통장 가입기간 (개월) */
-  subscriptionAccountMonths: string;
-  /** 청약통장 가입 연월 6자리 (YYYYMM) */
-  subscriptionAccountOpenedMonth: string;
+  /** 청약통장 개설일 8자리 (YYYYMMDD) */
+  subscriptionAccountOpenedDate: string;
   /** 청약통장 납입 횟수 */
   subscriptionAccountDepositCount: string;
 }
@@ -91,9 +78,7 @@ export const EMPTY_CONDITIONS: EligibilityConditions = {
   hasSubscriptionRight: false,
   firstTimeBuyer: false,
   hasSubscriptionAccount: false,
-  subscriptionAccountType: null,
-  subscriptionAccountMonths: "",
-  subscriptionAccountOpenedMonth: "",
+  subscriptionAccountOpenedDate: "",
   subscriptionAccountDepositCount: "",
 };
 
@@ -102,6 +87,13 @@ export function needsSpouseIncome(
   maritalStatus: MaritalStatus | null,
 ): boolean {
   return maritalStatus === "기혼" || maritalStatus === "결혼예정";
+}
+
+/** 결혼 예정일까지 받아야 하는 상태 */
+export function needsMarriagePlannedDate(
+  maritalStatus: MaritalStatus | null,
+): boolean {
+  return maritalStatus === "결혼예정";
 }
 
 /** 1단계 필수 항목이 모두 채워졌는지 */
