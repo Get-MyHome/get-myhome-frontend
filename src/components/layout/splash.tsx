@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import SplashGlowLarge from "@/assets/splashGlowLarge.svg";
 import SplashGlowSmall from "@/assets/splashGlowSmall.svg";
 import SplashHouse from "@/assets/splashHouse.svg";
+import { SERVICE_NAME } from "@/constants/service";
 import { cn } from "@/utils/cn";
 
 const VISIBLE_MS = 2000;
@@ -70,7 +71,7 @@ export function Splash() {
               </span>
             </span>
             <p className="text-heading-2 leading-none font-bold whitespace-nowrap">
-              Homm, 살 수 있어?
+              {SERVICE_NAME}
             </p>
           </div>
           <p className="text-body-2 font-medium whitespace-nowrap">
