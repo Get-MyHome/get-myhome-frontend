@@ -27,7 +27,9 @@ export interface EligibilityConditions {
   /** 전세 보증금 포함 여부 (선택) */
   includesJeonseDeposit: boolean;
 
-  // 2단계 — 전부 선택
+  // 2단계 — 전부 선택.
+  // 예/아니오 항목은 boolean | null 이다. null 은 "아직 답하지 않음" 으로,
+  // 초기값 false 로 두면 답변 진행률에서 "아니오" 와 구분되지 않는다.
   incomeType: IncomeTypeLabel | null;
   monthlySaving: string;
   /** 배우자·예비배우자 연소득 (만원) */
@@ -39,18 +41,18 @@ export interface EligibilityConditions {
   /** 기존 대출 잔액 (만원) */
   existingLoanBalance: string;
   /** 기존 대출 보유 여부 */
-  hasExistingLoan: boolean;
+  hasExistingLoan: boolean | null;
   /** 정책대출(디딤돌·청년주택드림) 조건도 확인할지 */
-  checkPolicyLoan: boolean;
+  checkPolicyLoan: boolean | null;
   householdRole: HouseholdRole | null;
-  allMembersHomeless: boolean;
+  allMembersHomeless: boolean | null;
   /** 순자산 본인·배우자 합산 (만원) */
   netWorth: string;
   /** 분양권·입주권 보유 여부 */
-  hasSubscriptionRight: boolean;
-  firstTimeBuyer: boolean;
+  hasSubscriptionRight: boolean | null;
+  firstTimeBuyer: boolean | null;
   /** 청약통장 보유 여부 */
-  hasSubscriptionAccount: boolean;
+  hasSubscriptionAccount: boolean | null;
   /** 청약통장 개설일 8자리 (YYYYMMDD) */
   subscriptionAccountOpenedDate: string;
   /** 청약통장 납입 횟수 */
@@ -70,14 +72,14 @@ export const EMPTY_CONDITIONS: EligibilityConditions = {
   marriagePlannedMonth: "",
   existingLoanMonthlyPayment: "",
   existingLoanBalance: "",
-  hasExistingLoan: false,
-  checkPolicyLoan: false,
+  hasExistingLoan: null,
+  checkPolicyLoan: null,
   householdRole: null,
-  allMembersHomeless: false,
+  allMembersHomeless: null,
   netWorth: "",
-  hasSubscriptionRight: false,
-  firstTimeBuyer: false,
-  hasSubscriptionAccount: false,
+  hasSubscriptionRight: null,
+  firstTimeBuyer: null,
+  hasSubscriptionAccount: null,
   subscriptionAccountOpenedDate: "",
   subscriptionAccountDepositCount: "",
 };

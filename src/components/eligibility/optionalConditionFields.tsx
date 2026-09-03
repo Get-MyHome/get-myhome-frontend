@@ -73,7 +73,8 @@ export function OptionalConditionFields({
   const yesNo = (key: keyof EligibilityConditions, label: string) => (
     <ChoiceGroup
       label={label}
-      value={conditions[key] ? "yes" : "no"}
+      // null 이면 아무것도 선택되지 않은 상태로 둔다
+      value={conditions[key] === null ? null : conditions[key] ? "yes" : "no"}
       options={YES_NO}
       onChange={(value) => {
         const on = value === "yes";
