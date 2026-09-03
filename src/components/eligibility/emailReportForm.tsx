@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { VERDICT_ID_STORAGE_KEY } from "@/constants/storage";
+import { getHttpStatus } from "@/lib/httpClient";
+import { useVerdictEmailMutation } from "@/queries/verdicts";
 import { cn } from "@/utils/cn";
+import { useIsMounted, useSessionRaw } from "@/utils/sessionState";
 
 /**
- * 판정 리포트 이메일 발송 (Figma 14:830).
- * POST /verdicts/{id}/email 은 verdictId 가 필요한데 POST /verdicts 가 아직
- * 미연동이라, 지금은 [다음] 시 전송 완료 팝업만 띄운다 (UI 퍼블).
+ * 판정 리포트 이메일 발송 (Figma 21:537).
+ * 판정 화면에서 적어둔 verdict_id 로 POST /verdicts/{id}/email 을 호출한다.
  */
 export function EmailReportForm() {
   const router = useRouter();
@@ -16,8 +19,26 @@ export function EmailReportForm() {
   const [touched, setTouched] = useState(false);
   const [sent, setSent] = useState(false);
 
+  const mounted = useIsMounted();
+  const rawVerdictId = useSessionRaw(VERDICT_ID_STORAGE_KEY);
+  const verdictId = useMemo(() => {
+    if (rawVerdictId === null) return null;
+    try {
+      return JSON.parse(rawVerdictId) as string;
+    } catch {
+      return null;
+    }
+  }, [rawVerdictId]);
+
+  const { mutate, isPending, isError, error } = useVerdictEmailMutation(verdictId);
+  // 판정 결과는 서버에서 만료된다. 그때는 다시 판정해야 한다
+  const expired = getHttpStatus(error) === 404;
+
   const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const showError = touched && email !== "" && !valid;
+  // 판정을 거치지 않고 들어오면 보낼 대상이 없다
+  const missingVerdict = mounted && verdictId === null;
+  const submittable = valid && !isPending && !missingVerdict;
 
   return (
     <div className="relative flex flex-1 flex-col">
@@ -51,6 +72,18 @@ export function EmailReportForm() {
               이메일 주소가 맞지 않습니다. 다시 입력해주세요.
             </p>
           )}
+          {missingVerdict && (
+            <p className="text-caption-2 font-medium text-danger">
+              판정 결과가 없어요. 판정을 먼저 진행해주세요.
+            </p>
+          )}
+          {isError && (
+            <p className="text-caption-2 font-medium text-danger">
+              {expired
+                ? "판정 결과가 만료됐어요. 판정을 다시 진행해주세요."
+                : "발송에 실패했어요. 잠시 후 다시 시도해주세요."}
+            </p>
+          )}
         </div>
 
         <p className="rounded-[6px] bg-muted p-[10px] text-caption-2 font-medium text-neutral-400">
@@ -62,14 +95,14 @@ export function EmailReportForm() {
 
       <button
         type="button"
-        disabled={!valid}
-        onClick={() => setSent(true)}
+        disabled={!submittable}
+        onClick={() => mutate(email, { onSuccess: () => setSent(true) })}
         className={cn(
           "flex h-[48px] w-full items-center justify-center text-body-2 font-bold text-white",
-          valid ? "bg-primary" : "bg-primary-400"
+          submittable ? "bg-primary" : "bg-primary-400"
         )}
       >
-        다음
+        {isPending ? "보내는 중" : "다음"}
       </button>
 
       {sent && (

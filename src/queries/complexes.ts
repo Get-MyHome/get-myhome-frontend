@@ -36,7 +36,9 @@ export function useMatchedComplexesQuery(
     queryKey: complexKeys.matched(params),
     queryFn: () => fetchMatchedComplexes(params),
     placeholderData: keepPreviousData,
-    enabled: (options.enabled ?? true) && Boolean(params.conditionToken),
+    enabled:
+      (options.enabled ?? true) &&
+      Boolean(params.conditionToken || params.user),
   });
 }
 

@@ -7,9 +7,11 @@ import ExternalLinkIcon from "@/assets/icons/externalLink.svg";
 import InfoCircleIcon from "@/assets/icons/infoCircle.svg";
 import RulerIcon from "@/assets/icons/ruler.svg";
 import { SelectableRow } from "@/components/ui/selectableRow";
+import { VERDICT_TARGET_STORAGE_KEY } from "@/constants/storage";
 import type { ComplexUnitType } from "@/types/complex";
 import { cn } from "@/utils/cn";
 import { formatManwonToEok } from "@/utils/format";
+import { writeSessionState } from "@/utils/sessionState";
 
 /** "059.9442A" → { area: 60, variant: "A" } */
 function parseUnitType(type: string): { area: number; variant: string } {
@@ -24,9 +26,11 @@ function parseUnitType(type: string): { area: number; variant: string } {
  * 디자인에는 선택된 상태만 있어 비활성 CTA 는 조건 입력 화면과 같은 규칙을 따랐다.
  */
 export function UnitTypeSelector({
+  complexId,
   unitTypes,
   sourceUrl,
 }: {
+  complexId: string;
   unitTypes: ComplexUnitType[];
   sourceUrl: string;
 }) {
@@ -81,7 +85,14 @@ export function UnitTypeSelector({
         <button
           type="button"
           disabled={!canProceed}
-          onClick={() => router.push("/eligibility/result")}
+          onClick={() => {
+            // 판정 화면이 어떤 단지·평형으로 계산할지 알아야 한다
+            writeSessionState(VERDICT_TARGET_STORAGE_KEY, {
+              complexId,
+              unitTypeId: selectedId,
+            });
+            router.push("/eligibility/result");
+          }}
           className={cn(
             "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",

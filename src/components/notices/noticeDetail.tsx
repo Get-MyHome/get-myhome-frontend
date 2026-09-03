@@ -67,7 +67,11 @@ export function NoticeDetail({ complexId }: { complexId: string }) {
         </p>
       </div>
 
-      <UnitTypeSelector unitTypes={data.unit_types} sourceUrl={data.source_url} />
+      <UnitTypeSelector
+        complexId={complexId}
+        unitTypes={data.unit_types}
+        sourceUrl={data.source_url}
+      />
     </div>
   );
 }

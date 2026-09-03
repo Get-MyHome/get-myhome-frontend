@@ -17,11 +17,14 @@ import type {
   ComplexSummary,
   HouseCategory,
 } from "@/types/complex";
+import type { EligibilityConditions } from "@/types/eligibility";
 import type { HousingSubscription, SupplyType } from "@/types/subscription";
 import { cn } from "@/utils/cn";
+import { toUserConditionRequest } from "@/utils/conditionRequest";
 import { formatDotDate } from "@/utils/format";
 import {
   clearSessionState,
+  parseSessionRaw,
   useIsMounted,
   useSessionRaw,
 } from "@/utils/sessionState";
@@ -78,14 +81,17 @@ export function SubscriptionSection({
   // 매칭 모드에서만 필요. 마운트 후 sessionStorage 에서 읽는다.
   const mounted = useIsMounted();
   const rawToken = useSessionRaw(FINANCING_TOKEN_STORAGE_KEY);
-  const conditionToken = useMemo(() => {
-    if (!matched || rawToken === null) return null;
-    try {
-      return JSON.parse(rawToken) as string;
-    } catch {
-      return null;
-    }
-  }, [matched, rawToken]);
+  const conditionToken = useMemo(
+    () => (matched ? parseSessionRaw<string>(rawToken) : null),
+    [matched, rawToken]
+  );
+  // 토큰은 30분이면 만료된다. 같은 조건으로 계속 조회되도록 user 도 함께 보낸다
+  const rawConditions = useSessionRaw(CONDITIONS_STORAGE_KEY);
+  const user = useMemo(() => {
+    if (!matched) return undefined;
+    const conditions = parseSessionRaw<EligibilityConditions>(rawConditions);
+    return (conditions ? toUserConditionRequest(conditions) : null) ?? undefined;
+  }, [matched, rawConditions]);
   const tokenPending = matched && !mounted;
 
   const allQuery = useComplexesQuery(
@@ -95,12 +101,13 @@ export function SubscriptionSection({
   const matchedQuery = useMatchedComplexesQuery(
     {
       conditionToken: conditionToken ?? "",
+      user,
       region,
       houseCategory,
       page,
       size: PAGE_SIZE,
     },
-    { enabled: matched && mounted && Boolean(conditionToken) }
+    { enabled: matched && mounted && Boolean(conditionToken || user) }
   );
   const { data, isLoading, isError, refetch } = matched ? matchedQuery : allQuery;
 
@@ -154,7 +161,7 @@ export function SubscriptionSection({
         />
       </div>
 
-      {matched && mounted && conditionToken === null && (
+      {matched && mounted && conditionToken === null && !user && (
         <ErrorState message="대출 자격 조회를 먼저 진행해주세요." />
       )}
 

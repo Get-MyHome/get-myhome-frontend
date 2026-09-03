@@ -6,6 +6,7 @@ import type {
   ComplexRegion,
   HouseCategory,
 } from "@/types/complex";
+import type { UserConditionRequest } from "@/types/financing";
 
 export interface FetchComplexesParams {
   /**
@@ -39,8 +40,10 @@ export async function fetchComplexDetail(
 }
 
 export interface FetchMatchedComplexesParams {
-  /** 대출 자격 조회로 받은 조건 토큰 (30분 유효) */
+  /** 대출 자격 조회로 받은 조건 토큰 (30분 유효). user 와 함께 보내면 토큰이 우선한다 */
   conditionToken: string;
+  /** 토큰이 만료돼도 같은 조건으로 조회되도록 함께 보낸다 */
+  user?: UserConditionRequest;
   region?: ComplexRegion;
   houseCategory?: HouseCategory;
   page?: number;
@@ -55,6 +58,7 @@ export async function fetchMatchedComplexes(
     "/complexes/matched",
     {
       condition_token: params.conditionToken,
+      user: params.user,
       region: params.region,
       house_category: params.houseCategory,
       page: params.page,
