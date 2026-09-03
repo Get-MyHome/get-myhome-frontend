@@ -10,7 +10,11 @@ import {
 } from "@/types/eligibility";
 import { cn } from "@/utils/cn";
 import { CONDITIONS_STORAGE_KEY } from "@/constants/storage";
-import { readSessionState, writeSessionState } from "@/utils/sessionState";
+import {
+  readSessionState,
+  useDiscardOnLeave,
+  writeSessionState,
+} from "@/utils/sessionState";
 
 import { RequiredConditionFields } from "./requiredConditionFields";
 
@@ -29,6 +33,9 @@ export function ConditionForm() {
     writeSessionState(CONDITIONS_STORAGE_KEY, conditions);
   }, [conditions]);
 
+  // 다음 단계로 넘기지 않고 화면을 떠나면 들어올 때 값으로 되돌린다
+  const { commit } = useDiscardOnLeave(CONDITIONS_STORAGE_KEY);
+
   const updateField = useCallback(
     <Key extends keyof EligibilityConditions>(
       key: Key,
@@ -46,6 +53,7 @@ export function ConditionForm() {
       className="flex flex-1 flex-col gap-[20px] px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+24px)]"
       onSubmit={(event) => {
         event.preventDefault();
+        commit();
         router.push("/eligibility/loans");
       }}
     >

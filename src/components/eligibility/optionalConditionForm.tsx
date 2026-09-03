@@ -8,7 +8,13 @@ import {
   type EligibilityConditions,
 } from "@/types/eligibility";
 import { CONDITIONS_STORAGE_KEY } from "@/constants/storage";
-import { readSessionState, writeSessionState } from "@/utils/sessionState";
+import { cn } from "@/utils/cn";
+import { hasIncompleteGate } from "@/utils/conditionProgress";
+import {
+  readSessionState,
+  useDiscardOnLeave,
+  writeSessionState,
+} from "@/utils/sessionState";
 
 import { OptionalConditionFields } from "./optionalConditionFields";
 
@@ -29,6 +35,9 @@ export function OptionalConditionForm() {
     writeSessionState(CONDITIONS_STORAGE_KEY, conditions);
   }, [conditions]);
 
+  // 다음 단계로 넘기지 않고 화면을 떠나면 들어올 때 값으로 되돌린다
+  const { commit } = useDiscardOnLeave(CONDITIONS_STORAGE_KEY);
+
   const updateField = useCallback(
     <Key extends keyof EligibilityConditions>(
       key: Key,
@@ -39,22 +48,38 @@ export function OptionalConditionForm() {
     []
   );
 
+  // "예" 로 열어둔 하위 입력칸이 비어 있으면 제출을 막는다
+  const blocked = hasIncompleteGate(conditions);
+
   return (
     <form
       className="flex flex-1 flex-col gap-[20px] px-gutter pt-5 pb-[calc(env(safe-area-inset-bottom)+24px)]"
       onSubmit={(event) => {
         event.preventDefault();
+        commit();
         router.push("/eligibility/loans");
       }}
     >
       <OptionalConditionFields conditions={conditions} onChange={updateField} />
 
-      <button
-        type="submit"
-        className="mt-auto flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
-      >
-        이 조건으로 다시 계산하기
-      </button>
+      <div className="mt-auto flex flex-col gap-[8px]">
+        {blocked && (
+          <p className="text-body-3 font-medium text-danger">
+            &quot;예&quot;로 답한 항목의 세부 값을 모두 입력해주세요.
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={blocked}
+          className={cn(
+            "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
+            "text-subtitle-4 font-bold text-white",
+            blocked ? "bg-primary-400" : "bg-primary"
+          )}
+        >
+          이 조건으로 다시 계산하기
+        </button>
+      </div>
     </form>
   );
 }

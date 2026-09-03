@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
+import ChevronRightIcon from "@/assets/icons/chevronRight.svg";
 import InfoCircleIcon from "@/assets/icons/infoCircle.svg";
 import MoneyStackIcon from "@/assets/icons/moneyStack.svg";
 import { ErrorState } from "@/components/ui/errorState";
@@ -17,9 +18,11 @@ import { useFinancingRoutesQuery } from "@/queries/financing";
 import type { EligibilityConditions } from "@/types/eligibility";
 import type { FinancingRouteDetail } from "@/types/financing";
 import { cn } from "@/utils/cn";
+import { getConditionProgress } from "@/utils/conditionProgress";
 import { toUserConditionRequest } from "@/utils/conditionRequest";
 import { formatManwonToEok } from "@/utils/format";
 import {
+  parseSessionRaw,
   useIsMounted,
   useSessionRaw,
   writeSessionState,
@@ -53,16 +56,15 @@ export function LoanRouteList() {
   // sessionStorage 는 클라이언트에서만 — 마운트 후에 읽어 하이드레이션 불일치를 피한다.
   const mounted = useIsMounted();
   const rawConditions = useSessionRaw(CONDITIONS_STORAGE_KEY);
-  const user = useMemo(() => {
-    if (rawConditions === null) return null;
-    try {
-      return toUserConditionRequest(
-        JSON.parse(rawConditions) as EligibilityConditions
-      );
-    } catch {
-      return null;
-    }
-  }, [rawConditions]);
+  const conditions = useMemo(
+    () => parseSessionRaw<EligibilityConditions>(rawConditions),
+    [rawConditions]
+  );
+  const user = useMemo(
+    () => (conditions ? toUserConditionRequest(conditions) : null),
+    [conditions]
+  );
+  const progress = conditions ? getConditionProgress(conditions) : null;
 
   const { data, isLoading, isError, refetch } = useFinancingRoutesQuery(
     mounted ? user : undefined
@@ -171,18 +173,54 @@ export function LoanRouteList() {
         {DISCLAIMER}
       </p>
 
-      <div className="mt-auto flex flex-col items-center gap-[10px] pt-[20px]">
-        <button
-          type="button"
-          onClick={() => router.push("/eligibility/loans/detail")}
-          className="flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
-        >
-          더 정확하게 알아보기
-        </button>
+      <div className="mt-auto flex flex-col gap-[10px] pt-[20px]">
+        {progress && (
+          <div className="flex flex-col gap-[6px] px-[10px]">
+            <div className="flex items-end justify-between gap-[12px]">
+              <div className="flex min-w-0 flex-col">
+                {/* 1단계 필수는 이미 채우고 온 화면이라, 여기서 세는 것이
+                    2단계 추가 항목이라는 걸 문구로 못박는다 */}
+                <p className="text-body-3 font-medium text-foreground">
+                  추가 정보 {progress.answered}/{progress.total} 입력 ·{" "}
+                  {progress.percent}%
+                </p>
+                <p className="text-body-3 font-medium text-muted-foreground">
+                  더 자세한 청약 가능성을 받아보세요.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => router.push("/eligibility/loans/detail")}
+                className="flex shrink-0 items-center text-caption-2 font-medium text-info"
+              >
+                이어서 답하기
+                <ChevronRightIcon
+                  aria-hidden="true"
+                  className="size-[18px] shrink-0"
+                />
+              </button>
+            </div>
+
+            <span
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={progress.total}
+              aria-valuenow={progress.answered}
+              aria-valuetext={`${progress.total}개 중 ${progress.answered}개 답변`}
+              className="block h-[4px] w-full overflow-hidden rounded-full bg-muted"
+            >
+              <span
+                className="block h-full rounded-full bg-primary transition-[width] duration-300 motion-reduce:transition-none"
+                style={{ width: `${progress.percent}%` }}
+              />
+            </span>
+          </div>
+        )}
+
         <button
           type="button"
           onClick={() => router.push("/eligibility/notices")}
-          className="text-body-2 font-bold text-foreground"
+          className="flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
         >
           다음
         </button>
