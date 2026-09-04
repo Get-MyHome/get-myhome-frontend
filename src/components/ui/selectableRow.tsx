@@ -20,7 +20,7 @@ export function SelectableRow({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        "flex w-full items-center justify-between rounded-[6px] border p-[12px]",
+        "flex w-full cursor-pointer items-center justify-between rounded-[6px] border p-[12px]",
         "text-body-2 font-medium",
         selected
           ? "border-primary text-foreground"

@@ -72,8 +72,9 @@ export function OptionalConditionForm() {
           type="submit"
           disabled={blocked}
           className={cn(
-            "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
+            "flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[6px] p-[10px]",
             "text-subtitle-4 font-bold text-white",
+            "disabled:cursor-not-allowed",
             blocked ? "bg-primary-400" : "bg-primary"
           )}
         >

@@ -38,7 +38,7 @@ export function BottomSheet({
         type="button"
         aria-label="닫기"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 cursor-pointer bg-black/40"
       />
       <div
         role="dialog"

@@ -117,7 +117,7 @@ function FilterSheet<T extends string>({
             onClick={() => setPending(option.value)}
             aria-pressed={option.value === pending}
             className={cn(
-              "rounded-full border px-[12px] py-[8px] text-body-3 font-medium text-foreground",
+              "cursor-pointer rounded-full border px-[12px] py-[8px] text-body-3 font-medium text-foreground",
               option.value === pending ? "border-primary" : "border-transparent"
             )}
           >
@@ -131,7 +131,7 @@ function FilterSheet<T extends string>({
       <button
         type="button"
         onClick={() => onConfirm(pending)}
-        className="mt-[24px] flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
+        className="mt-[24px] flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
       >
         {pendingLabel} 공고 보기
       </button>

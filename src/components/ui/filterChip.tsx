@@ -18,7 +18,7 @@ export function FilterChip({
       type="button"
       onClick={onClick}
       aria-haspopup="listbox"
-      className="flex items-center gap-[6px] rounded-[48px] border border-neutral-300 px-[8px] py-[6px] text-body-3 font-medium text-foreground"
+      className="flex cursor-pointer items-center gap-[6px] rounded-[48px] border border-neutral-300 px-[8px] py-[6px] text-body-3 font-medium text-foreground"
     >
       {label}
       {/* 디자인은 11x8 박스 안에 7.39x5.39 삼각형이 들어있다.

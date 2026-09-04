@@ -31,7 +31,7 @@ export function AppBar({
           type="button"
           onClick={() => router.back()}
           aria-label="뒤로 가기"
-          className="absolute left-[17px] flex size-6 items-center justify-center"
+          className="absolute left-[17px] flex size-6 cursor-pointer items-center justify-center"
         >
           <BackArrowIcon className="h-4 w-[22px]" />
         </button>

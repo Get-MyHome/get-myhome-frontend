@@ -50,7 +50,7 @@ export function TermsAgreementSheet({
             type="button"
             onClick={() => setAgreed((v) => !v)}
             aria-pressed={agreed}
-            className="flex items-center gap-[6px] text-body-2 font-bold text-foreground"
+            className="flex cursor-pointer items-center gap-[6px] text-body-2 font-bold text-foreground"
           >
             <span
               className={cn(
@@ -69,7 +69,7 @@ export function TermsAgreementSheet({
           <button
             type="button"
             onClick={() => setShowPolicy(true)}
-            className="shrink-0 text-body-2 font-medium text-neutral-300 underline"
+            className="shrink-0 cursor-pointer text-body-2 font-medium text-neutral-300 underline"
           >
             보기
           </button>
@@ -84,7 +84,8 @@ export function TermsAgreementSheet({
           disabled={!agreed}
           onClick={onAgree}
           className={cn(
-            "flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px] text-subtitle-4 font-bold text-white",
+            "flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[6px] p-[10px] text-subtitle-4 font-bold text-white",
+            "disabled:cursor-not-allowed",
             agreed ? "bg-primary" : "bg-primary-400"
           )}
         >

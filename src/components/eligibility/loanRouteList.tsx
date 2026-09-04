@@ -191,7 +191,7 @@ export function LoanRouteList() {
               <button
                 type="button"
                 onClick={() => router.push("/eligibility/loans/detail")}
-                className="flex shrink-0 items-center text-caption-2 font-medium text-info"
+                className="flex shrink-0 cursor-pointer items-center text-caption-2 font-medium text-info"
               >
                 이어서 답하기
                 <ChevronRightIcon
@@ -220,7 +220,7 @@ export function LoanRouteList() {
         <button
           type="button"
           onClick={() => router.push("/eligibility/notices")}
-          className="flex h-[44px] w-full items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
+          className="flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[6px] bg-primary p-[10px] text-subtitle-4 font-bold text-white"
         >
           다음
         </button>

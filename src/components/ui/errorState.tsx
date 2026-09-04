@@ -23,7 +23,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onAction}
-          className="mt-[6px] rounded-[6px] border border-border px-[12px] py-[6px] text-body-3 font-medium text-foreground"
+          className="mt-[6px] cursor-pointer rounded-[6px] border border-border px-[12px] py-[6px] text-body-3 font-medium text-foreground"
         >
           {actionLabel}
         </button>

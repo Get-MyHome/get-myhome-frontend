@@ -41,7 +41,7 @@ export function SelectField<Option extends string>({
           aria-expanded={open}
           aria-controls={listId}
           className={cn(
-            "flex w-full items-center justify-between gap-[11px] rounded-[6px] border bg-surface px-[10px] py-[8px]",
+            "flex w-full cursor-pointer items-center justify-between gap-[11px] rounded-[6px] border bg-surface px-[10px] py-[8px]",
             !value
               ? "border-primary-400"
               : open
@@ -76,7 +76,7 @@ export function SelectField<Option extends string>({
                     onChange(option);
                     setOpen(false);
                   }}
-                  className="flex w-full px-[16px] py-[8px] text-left text-body-2 font-medium text-black"
+                  className="flex w-full cursor-pointer px-[16px] py-[8px] text-left text-body-2 font-medium text-black"
                 >
                   {option}
                 </button>

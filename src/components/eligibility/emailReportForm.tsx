@@ -100,8 +100,9 @@ export function EmailReportForm() {
           disabled={!submittable}
           onClick={() => mutate(email, { onSuccess: () => setSent(true) })}
           className={cn(
-            "flex h-[48px] w-full items-center justify-center rounded-[6px]",
+            "flex h-[48px] w-full cursor-pointer items-center justify-center rounded-[6px]",
             "text-body-2 font-bold text-white",
+            "disabled:cursor-not-allowed",
             submittable ? "bg-primary" : "bg-primary-400"
           )}
         >
@@ -115,7 +116,7 @@ export function EmailReportForm() {
             type="button"
             aria-label="닫기"
             onClick={() => setSent(false)}
-            className="absolute inset-0 bg-black/55"
+            className="absolute inset-0 cursor-pointer bg-black/55"
           />
           <div
             role="dialog"
@@ -136,7 +137,7 @@ export function EmailReportForm() {
                 setSent(false);
                 router.push("/");
               }}
-              className="flex h-[52px] w-full items-center justify-center bg-primary text-body-2 font-medium text-white"
+              className="flex h-[52px] w-full cursor-pointer items-center justify-center bg-primary text-body-2 font-medium text-white"
             >
               확인
             </button>

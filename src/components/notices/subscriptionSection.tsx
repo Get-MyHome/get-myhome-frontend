@@ -220,7 +220,7 @@ export function SubscriptionSection({
               type="button"
               onClick={() => changePage((p) => p - 1)}
               disabled={page <= 1}
-              className="rounded-[6px] border border-border px-[10px] py-[6px] text-body-3 font-medium text-foreground disabled:text-muted-foreground"
+              className="cursor-pointer rounded-[6px] border border-border px-[10px] py-[6px] text-body-3 font-medium text-foreground disabled:cursor-not-allowed disabled:text-muted-foreground"
             >
               이전
             </button>
@@ -231,7 +231,7 @@ export function SubscriptionSection({
               type="button"
               onClick={() => changePage((p) => p + 1)}
               disabled={page >= totalPages}
-              className="rounded-[6px] border border-border px-[10px] py-[6px] text-body-3 font-medium text-foreground disabled:text-muted-foreground"
+              className="cursor-pointer rounded-[6px] border border-border px-[10px] py-[6px] text-body-3 font-medium text-foreground disabled:cursor-not-allowed disabled:text-muted-foreground"
             >
               다음
             </button>

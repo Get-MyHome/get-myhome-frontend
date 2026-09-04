@@ -63,8 +63,9 @@ export function ConditionForm() {
         type="submit"
         disabled={!submittable}
         className={cn(
-          "mt-auto flex h-[44px] w-full items-center justify-center rounded-[6px] p-[10px]",
+          "mt-auto flex h-[44px] w-full cursor-pointer items-center justify-center rounded-[6px] p-[10px]",
           "text-subtitle-4 font-bold text-white",
+          "disabled:cursor-not-allowed",
           submittable ? "bg-primary" : "bg-primary-400"
         )}
       >

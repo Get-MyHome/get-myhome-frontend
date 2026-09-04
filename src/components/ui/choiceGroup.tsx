@@ -32,7 +32,7 @@ export function ChoiceGroup<Value extends string>({
               onClick={() => onChange(option.value)}
               aria-pressed={selected}
               className={cn(
-                "flex h-[55px] flex-1 items-center justify-center rounded-[6px] border p-[10px] text-body-2 font-medium",
+                "flex h-[55px] flex-1 cursor-pointer items-center justify-center rounded-[6px] border p-[10px] text-body-2 font-medium",
                 selected
                   ? "border-neutral-500 bg-muted text-foreground"
                   : "border-primary-300 text-neutral-300",
