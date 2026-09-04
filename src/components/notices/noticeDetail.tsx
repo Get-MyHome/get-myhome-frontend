@@ -53,7 +53,7 @@ export function NoticeDetail({ complexId }: { complexId: string }) {
     <div className={wrapper}>
       <div className="flex flex-col gap-[8px] rounded-[6px] bg-primary-50 p-[12px]">
         <span className="flex w-fit items-center rounded-[5px] bg-primary-400 p-[4px]">
-          <BuildingIcon aria-hidden="true" className="size-6 text-foreground" />
+          <BuildingIcon aria-hidden="true" className="size-6 text-white" />
         </span>
         <h2 className="text-subtitle-3 font-bold text-foreground">{data.name}</h2>
         <p className="flex items-center gap-[4px] text-body-3 font-medium text-foreground">
