@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import LocationPointIcon from "@/assets/icons/locationPoint.svg";
 import { useRegionCountsQuery, type RegionCount } from "@/queries/complexes";
@@ -27,11 +27,43 @@ export function RegionCountSwiper() {
 
   const pages = chunk(counts, PER_PAGE);
 
+  // 트랙패드/터치 스크롤은 브라우저가 기본 지원하지만, 마우스 클릭 드래그는
+  // overflow-x-auto 만으로 동작하지 않아 직접 scrollLeft 를 옮겨준다
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ startX: number; startScrollLeft: number } | null>(
+    null
+  );
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const track = trackRef.current;
+    if (!track) return;
+    dragState.current = {
+      startX: event.pageX,
+      startScrollLeft: track.scrollLeft,
+    };
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const track = trackRef.current;
+    if (!track || !dragState.current) return;
+    event.preventDefault();
+    track.scrollLeft =
+      dragState.current.startScrollLeft -
+      (event.pageX - dragState.current.startX);
+  };
+
+  const endDrag = () => {
+    dragState.current = null;
+    setIsDragging(false);
+  };
+
   return (
     <section className="flex flex-col gap-[14px]">
       <div className="flex items-center justify-between">
         <h2 className="text-body-2 font-bold text-foreground">
-          지역별 제공 중인 청약
+          지역별 제공 중인 청약공고 개수
         </h2>
         {updatedAt && (
           <p className="text-body-3 font-medium text-neutral-300">
@@ -42,17 +74,24 @@ export function RegionCountSwiper() {
 
       <div className="flex flex-col items-center gap-[20px]">
         <div
+          ref={trackRef}
           onScroll={(event) => {
             const el = event.currentTarget;
             setPageIndex(Math.round(el.scrollLeft / el.clientWidth));
           }}
-          className="flex w-full snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={endDrag}
+          onMouseLeave={endDrag}
+          className={cn(
+            "flex w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            isDragging
+              ? "cursor-grabbing select-none"
+              : "cursor-grab snap-x snap-mandatory"
+          )}
         >
           {pages.map((page, i) => (
-            <div
-              key={i}
-              className="flex w-full shrink-0 snap-start gap-[11px]"
-            >
+            <div key={i} className="flex w-full shrink-0 snap-start gap-[11px]">
               {page.map((item) => (
                 <RegionChip key={item.region} item={item} />
               ))}
