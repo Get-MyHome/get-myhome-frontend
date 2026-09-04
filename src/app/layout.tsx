@@ -41,7 +41,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${geistMono.variable} antialiased`}>
+    // 아래 스플래시 스크립트가 하이드레이션 전에 html 에 data-splash-seen 을
+    // 붙인다. 서버 HTML 에는 없는 속성이라 리액트가 불일치로 보고 경고하는데,
+    // 의도한 동작이므로 이 엘리먼트에 한해 경고를 끈다(자식에는 영향 없음).
+    <html
+      lang="ko"
+      className={`${geistMono.variable} antialiased`}
+      suppressHydrationWarning
+    >
       <body className="bg-white">
         {/* 스플래시는 세션당 첫 진입에만 띄운다. 판정을 리액트에 맡기면 서버가
             그린 HTML 이 하이드레이션 전에 이미 떠서 새로고침 때 깜빡인다.
