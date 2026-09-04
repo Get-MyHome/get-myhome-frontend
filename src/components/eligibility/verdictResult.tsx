@@ -193,7 +193,9 @@ export function VerdictResult() {
       <div className={wrapper}>
         <LoadingState
           message="판정하는 중이에요"
-          hint={"처음 보는 공고는 공고문을 분석하느라\n시간이 조금 걸릴 수 있어요."}
+          hint={
+            "처음 보는 공고는 공고문을 분석하느라\n시간이 조금 걸릴 수 있어요."
+          }
         />
       </div>
     );
@@ -244,14 +246,17 @@ export function VerdictResult() {
       {/* 공고 요약 */}
       <div className="relative flex flex-col gap-[8px] rounded-[6px] bg-primary-50 p-[12px]">
         <span className="flex w-fit items-center rounded-[5px] bg-primary-400 p-[4px]">
-          <BuildingIcon aria-hidden="true" className="size-6 text-foreground" />
+          <BuildingIcon aria-hidden="true" className="size-6 text-white" />
         </span>
         <h2 className="text-subtitle-3 font-bold text-foreground">
           {meta?.complex_name ?? "선택한 공고"}
         </h2>
         {complex?.address && (
           <p className="flex items-center gap-[4px] text-body-3 font-medium text-foreground">
-            <LocationPointIcon aria-hidden="true" className="size-[17px] shrink-0" />
+            <LocationPointIcon
+              aria-hidden="true"
+              className="size-[17px] shrink-0"
+            />
             {complex.address}
           </p>
         )}
@@ -265,7 +270,10 @@ export function VerdictResult() {
         </p>
         {needsCheck && (
           <span className="absolute top-[12px] right-[12px] flex items-center gap-[4px] text-body-3 font-medium text-danger">
-            <ErrorSmallIcon aria-hidden="true" className="size-[14px] shrink-0" />
+            <ErrorSmallIcon
+              aria-hidden="true"
+              className="size-[14px] shrink-0"
+            />
             확인 필요있음
           </span>
         )}
@@ -295,8 +303,8 @@ export function VerdictResult() {
             {data.overall_fund_status === "OK"
               ? "지금 조건으로 완주할 수 있어요"
               : awaitingReview
-                ? "공고문 검수가 끝나면 판정할 수 있어요"
-                : "부족 구간을 계산하지 못했어요"}
+              ? "공고문 검수가 끝나면 판정할 수 있어요"
+              : "부족 구간을 계산하지 못했어요"}
           </p>
         )}
       </div>
