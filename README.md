@@ -139,23 +139,57 @@ Homm은 내 금융 조건과 **실제 공고문의 납부 조건**을 합쳐 계
 
 ### 진입 · 청약 공고 조회
 
-![스플래시, 홈, 공고 지역 필터 화면](docs/images/screen-entry.png)
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/images/screens/01-splash.png" alt="스플래시" /><br /><sub><b>스플래시</b><br />세션 첫 진입 시 약 2초</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/02-home.png" alt="홈" /><br /><sub><b>홈</b><br />지역별 청약 건수, 예시 판정 리포트</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/03-notices-filter.png" alt="공고 지역 필터" /><br /><sub><b>공고</b><br />진행 중 · 최근 마감 공고, 지역 필터</sub></td>
+    <td width="25%"></td>
+  </tr>
+</table>
 
 ### 조건 입력 · 대출 경로 판정
 
-![조건 입력, 대출 판정 결과, 조건 추가 입력 화면](docs/images/screen-conditions.png)
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/images/screens/04-conditions.png" alt="조건 입력" /><br /><sub><b>조건 입력</b><br />필수 5~6개, 금액은 한글로 바로 환산</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/05-conditions-detail-1.png" alt="조건 추가 입력 상단" /><br /><sub><b>조건 추가 입력</b><br />'예'를 고르면 하위 입력란이 열림</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/06-conditions-detail-2.png" alt="조건 추가 입력 하단" /><br /><sub><b>조건 추가 입력</b><br />청약통장, 월 저축 가능액</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/07-loans.png" alt="대출 판정 결과" /><br /><sub><b>대출 판정 결과</b><br />6개 경로별 가능 여부 · 한도 · 사유</sub></td>
+  </tr>
+</table>
 
 ### 공고 선별 · 구간별 자금 판정
 
-![청약 공고 목록, 평형 선택, 판정 결과 화면](docs/images/screen-verdict.png)
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/images/screens/08-eligibility-notices.png" alt="청약 공고 선택 목록" /><br /><sub><b>청약 공고 선택</b><br />예산 안의 공고만, 가능한 대출 태그</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/09-unit-select.png" alt="평형 선택" /><br /><sub><b>평형 선택</b><br />주택형별 분양가, 원문 공고문 링크</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/10-result-top.png" alt="판정 결과 상단" /><br /><sub><b>판정 결과</b><br />처음 모자라는 구간과 부족액</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/11-result-bottom.png" alt="판정 결과 하단" /><br /><sub><b>판정 결과</b><br />중도금 임계선 · 안전마진</sub></td>
+  </tr>
+</table>
 
 ### 약관 동의 · 보고서 발송
 
-![서비스 동의 바텀시트, 개인정보 처리방침, 이메일 입력, 전송 완료 화면](docs/images/screen-send.png)
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/images/screens/12-consent.png" alt="서비스 동의" /><br /><sub><b>서비스 동의</b><br />동의해야 다음으로 진행</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/13-privacy.png" alt="개인정보 처리방침" /><br /><sub><b>개인정보 처리방침</b><br />수집 항목 · 목적 · 보유 기간</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/14-email-input.png" alt="이메일 입력" /><br /><sub><b>내용 받기</b><br />형식이 맞을 때만 버튼 활성화</sub></td>
+    <td align="center" width="25%"><img src="docs/images/screens/15-email-sent.png" alt="이메일 전송 완료" /><br /><sub><b>전송 완료</b><br />확인을 누르면 홈으로</sub></td>
+  </tr>
+</table>
 
-### 발송되는 보고서 (이메일 본문 · 첨부 PDF)
+### 발송되는 진단서
 
-![판정 리포트 이메일과 첨부 PDF 보고서](docs/images/screen-report.png)
+<table>
+  <tr>
+    <td align="center" width="33%"><img src="docs/images/screens/16-report-email-1.png" alt="판정 리포트 이메일 상단" /><br /><sub><b>이메일 본문</b><br />입주 완주 진단, 구간별 결과</sub></td>
+    <td align="center" width="33%"><img src="docs/images/screens/17-report-email-2.png" alt="판정 리포트 이메일 하단" /><br /><sub><b>이메일 본문</b><br />중도금 임계선, 위험 조항과 원문 근거</sub></td>
+    <td align="center" width="33%"><img src="docs/images/screens/18-report-pdf.png" alt="첨부 PDF 진단서" /><br /><sub><b>첨부 PDF</b><br />진단 대상 정보, 공고문 분석 요약</sub></td>
+  </tr>
+</table>
 
 ## AI는 어디까지 쓰나
 
